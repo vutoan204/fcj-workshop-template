@@ -20,7 +20,7 @@ pre: " <b> 2. </b> "
 ### 3. Solution Architecture  
 The platform uses tightly coordinated Serverless services following a sequential data flow, as illustrated in the execution flow diagram below:
 
-![Smart Image Platform Architecture](static/images/2-Proposal/architecture.jpeg)
+![Smart Image Platform Architecture](/images/2-Proposal/architecture.jpeg)
 
 * **Execution Flow Details:**
   1. **Users** access the frontend application interface hosted on **Amazon Amplify**.
