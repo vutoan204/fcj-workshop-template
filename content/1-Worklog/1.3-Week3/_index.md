@@ -5,53 +5,20 @@ weight: 1
 chapter: false
 pre: " <b> 1.3. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
-
 ### Week 3 Objectives:
-
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Understand core architectural concepts and network security configurations of AWS Virtual Private Cloud (VPC).
+* Design and practically implement a secure, multi-tier custom VPC network with public and private subnets.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | --- | --- | --- | --- |
+| 2 | - **Learn VPC fundamental concepts:** <br>&emsp; + Module 02-01 - AWS Virtual Private Cloud Overview <br>&emsp; + Module 02-02 - VPC Security Essentials and Multi-VPC features | 05/01/2026 | 05/01/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Learn VPC advanced architecture:** <br>&emsp; + Module 02-03 - Advanced networking connectivity: VPN, DirectConnect, LoadBalancer, and Extra Resources | 05/02/2026 | 05/02/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Practice building a VPC network (Core Infrastructure):** <br>&emsp; + Module 02-Lab03-01 - Initializing Amazon VPC and AWS VPN Site-to-Site configuration <br>&emsp; + Module 02-Lab03-01.1 - Designing and allocating network Subnets <br>&emsp; + Module 02-Lab03-01.2 - Configuring Route Tables for traffic control | 05/03/2026 | 05/03/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Practice building a VPC network (Gateway Integration):** <br>&emsp; + Module 02-Lab03-01.3 - Creating and attaching an Internet Gateway (IGW) <br>&emsp; + Module 02-Lab03-01.4 - Setting up a NAT Gateway for private network out-bound access | 05/04/2026 | 05/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Practice network security and finalizing the setup:** <br>&emsp; + Module 02-Lab03-02.1 - Configuring stateful instance-level security via Security Groups <br>&emsp; + Module 02-Lab03-02.2 - Establishing stateless subnet-level boundaries via Network ACLs <br>&emsp; + Module 02-Lab03-03.1 - Practical execution of custom VPC generation <br>&emsp; + Module 02-Lab03-03.2 - Final validation of Subnet routing controls | 05/05/2026 | 05/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Week 3 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Acquired a solid structural understanding of VPC design pattern, including data routing logic with Route Tables, NAT Gateways, and Internet Gateways.
+* Mastered granular infrastructure security mechanisms: effectively separating stateful firewall rules via Security Groups and stateless perimeter traffic filtering using Network ACLs.
+* Successfully built, mapped out, and configured a complete multi-tier custom VPC containing isolated Public subnets (internet-facing) and Private subnets (backend-hosting) directly via the AWS Console management environment.

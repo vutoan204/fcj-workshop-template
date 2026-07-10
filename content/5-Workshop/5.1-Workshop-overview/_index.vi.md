@@ -1,19 +1,44 @@
 ---
-title : "Giới thiệu"
-date : 2024-01-01 
-weight : 1
-chapter : false
-pre : " <b> 5.1. </b> "
+title: "Tổng quan & Giới thiệu"
+date: 2024-01-01 
+weight: 1 
+chapter: false
+pre: " <b> 5.1. </b> "
 ---
 
-#### Giới thiệu về VPC Endpoint
 
-+ Điểm cuối VPC (endpoint) là thiết bị ảo. Chúng là các thành phần VPC có thể mở rộng theo chiều ngang, dự phòng và có tính sẵn sàng cao. Chúng cho phép giao tiếp giữa tài nguyên điện toán của bạn và dịch vụ AWS mà không gây ra rủi ro về tính sẵn sàng.
-+ Tài nguyên điện toán đang chạy trong VPC có thể truy cập Amazon S3 bằng cách sử dụng điểm cuối Gateway. Interface Endpoint  PrivateLink có thể được sử dụng bởi tài nguyên chạy trong VPC hoặc tại TTDL.
+# Tổng quan Workshop: Smart Image Platform
 
-#### Tổng quan về workshop
-Trong workshop này, bạn sẽ sử dụng hai VPC.
-+ **"VPC Cloud"** dành cho các tài nguyên cloud như Gateway endpoint và EC2 instance để kiểm tra.
-+ **"VPC On-Prem"** mô phỏng môi trường truyền thống như nhà máy hoặc trung tâm dữ liệu của công ty. Một EC2 Instance chạy phần mềm StrongSwan VPN đã được triển khai trong "VPC On-prem" và được cấu hình tự động để thiết lập đường hầm VPN Site-to-Site với AWS Transit Gateway. VPN này mô phỏng kết nối từ một vị trí tại TTDL (on-prem) với AWS cloud. Để giảm thiểu chi phí, chỉ một phiên bản VPN được cung cấp để hỗ trợ workshop này. Khi lập kế hoạch kết nối VPN cho production workloads của bạn, AWS khuyên bạn nên sử dụng nhiều thiết bị VPN để có tính sẵn sàng cao.
+**Smart Image Platform** là một ứng dụng Serverless và hướng sự kiện (Event-Driven) trên AWS, được thiết kế để tự động hóa việc tải ảnh lên, xử lý ảnh (tạo thumbnail, thay đổi kích thước) và phân loại, gắn nhãn thông minh bằng AI.
 
-![overview](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+Trong bài lab này, bạn sẽ học cách thiết lập và cấu hình toàn bộ hạ tầng của nền tảng **từng bước một bằng tay trên AWS Management Console**.
+
+### Kiến trúc giải pháp
+
+Nền tảng sử dụng các dịch vụ Serverless phối hợp chặt chẽ theo luồng dữ liệu số hóa tuần tự, được biểu diễn qua sơ đồ luồng hoạt động dưới đây:
+
+![Smart Image Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
+
+* **Các dịch vụ AWS chính được sử dụng:**
+  * **Amazon S3:** Lưu trữ đối tượng (Object Storage) chứa ảnh thô tải lên (`raw-images-bucket`) và ảnh đã xử lý/thumbnail (`processed-images-bucket`).
+  * **Amazon Cognito:** Quản lý tài khoản và xác thực người dùng (User Pool & App Client).
+  * **Amazon DynamoDB:** Cơ sở dữ liệu NoSQL lưu trữ siêu dữ liệu (metadata) của hình ảnh (sử dụng Single-table design, bật GSI và DynamoDB Streams), quản lý hồ sơ người dùng và hạn mức tải lên (Quota).
+  * **AWS Lambda:**
+    * `api-handler`: Xử lý các request REST API (tạo presigned URL, CRUD DynamoDB, CRUD profile, kiểm tra hạn mức quota).
+    * `image-processor`: Bắt sự kiện tải ảnh lên S3 raw (chỉ bắt các file có tiền tố `users/`) để tự động resize và lưu metadata cơ bản.
+    * `ai-analyzer`: Bắt sự kiện thay đổi dữ liệu từ DynamoDB Stream để gọi Rekognition bóc nhãn AI.
+  * **Amazon API Gateway:** Cung cấp các REST API cho phía Client.
+  * **Amazon Rekognition:** Dịch vụ AI tự động phân tích hình ảnh (nhận diện vật thể, kiểm duyệt nội dung nhạy cảm).
+  * **AWS Amplify:** Lưu trữ và triển khai ứng dụng frontend React.
+  * **S3 Presigned GET URLs:** Sử dụng các đường dẫn tạm thời có ký thực (ký bởi Lambda thông qua API Gateway) để tải và hiển thị ảnh, thay thế cho phân phối qua CloudFront do giới hạn xác minh tài khoản AWS.
+
+---
+
+### Các bước thực hành trong Lab
+Trong các phần tiếp theo, bạn sẽ tự tay cấu hình các dịch vụ này trên AWS Console:
+1. **Điều kiện tiên quyết:** Chuẩn bị tài khoản AWS, mã nguồn dự án, repository GitHub cho frontend.
+2. **Cấu hình Storage & Database:** Tạo S3 buckets (raw và processed), tạo 3 bảng DynamoDB (`SmartImage-Images` bật GSI và DynamoDB Stream, `SmartImage-UserQuotas`, và `SmartImage-UserProfiles`).
+3. **Xác thực Cognito:** Cấu hình User Pool và App Client để bảo mật các API endpoints.
+4. **Backend Serverless:** Tạo các Lambda functions, cấu hình IAM Role, tạo S3 triggers (prefix `users/`) và DynamoDB Stream triggers, cấu hình API Gateway REST API.
+5. **Triển khai Frontend:** Kết nối repository GitHub với AWS Amplify để chạy website React thực tế.
+6. **Kiểm thử & Xác minh:** Tải ảnh lên và kiểm tra luồng chạy tự động từ S3 -> Lambda -> DynamoDB -> Rekognition.

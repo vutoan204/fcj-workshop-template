@@ -5,54 +5,24 @@ weight: 2
 chapter: false
 pre: " <b> 1.12 </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+
 
 ### Mục tiêu tuần 12:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
-
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
+* Nghiên cứu cơ chế bắt dữ liệu thời gian thực để tích hợp AI Amazon Rekognition, tối ưu tốc độ phân phối nội dung toàn cầu bằng CDN và hoàn thiện hồ sơ báo cáo đồ án.
 
 
+### Các công việc thực hiện trong tuần:
+| Ngày | Nội dung công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --- | --- | --- | --- |
+| 2 | - Hoàn thiện sơ đồ kiến trúc thông qua anh/chị Admin hỗ trợ. | 06/07/2026 | 06/07/2026 |  |
+| 3 | - Hỗ Trợ Thành viên Nhóm làm Workshop và Blogs. | 07/07/2026 | 07/07/2026 |  |
+| 4 | - Gom lại toàn bộ các bản vẽ sơ đồ kiến trúc, tài liệu đặc tả luồng xử lý và kết quả kiểm thử qua các tuần để đóng gói | 08/07/2026 | 08/07/2026 |  |
+| 5 | - Hoàn thiện Worklog,Template | 09/07/2026 | 09/07/2026 |  |
+| 6 | -  Hoàn thiện quyển báo cáo đồ án và các phiếu. | 10/07/2026 | 10/07/2026 |  |
 ### Kết quả đạt được tuần 12:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Hoàn thiện thiết kế luồng xử lý dữ liệu thông minh tự động hóa 100%, tích hợp thành công công nghệ AI thị giác máy tính vào sơ đồ tổng quan.
+* Đưa ra giải pháp tối ưu hóa hiệu năng và tăng tốc độ trải nghiệm người dùng toàn cầu nhờ mạng lưới CDN.
+* Thực hiện kiểm thử toàn diện, chứng minh tính khả thi, độ an toàn bảo mật và khả năng vận hành liên tục của kiến trúc hệ thống đã thiết kế.
+* Tổng hợp thành công toàn bộ hồ sơ thiết kế kiến trúc, hoàn thiện phần nội dung đóng góp trong quyển báo cáo đồ án đúng tiến độ.

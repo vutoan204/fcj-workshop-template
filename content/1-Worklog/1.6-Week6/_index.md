@@ -5,53 +5,22 @@ weight: 1
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
-
 ### Week 6 Objectives:
-
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Understand advanced EC2 compute features in detail, including Instance Types, AMI, EBS, Instance Store, User Data, Metadata, and Auto Scaling.
+* Deploy automated backup policies using AWS Backup.
+* Design a hybrid storage environment via AWS Storage Gateway linking on-premises servers to S3.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | --- | --- | --- | --- |
+| 2 | - **In-depth EC2 Research:** <br>&emsp; + Module 03-01 - Compute VM on AWS <br>&emsp; + Module 03-01-01 - Instance type <br>&emsp; + Module 03-01-02 - AMI / Backup / Key Pair <br>&emsp; + Module 03-01-03 - Elastic block store | 05/25/2026 | 05/25/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **In-depth EC2 Research (Continued):** <br>&emsp; + Module 03-01-04 - Instance store <br>&emsp; + Module 03-01-05 - User data <br>&emsp; + Module 03-01-06 - Meta data <br>&emsp; + Module 03-01-07 - EC2 auto scaling <br>&emsp; + Module-03-02 - EC2 Autoscaling - EFS/FSx - Lightsail - MGN | 05/26/2026 | 05/26/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Practice AWS Backup Lab:** <br>&emsp; + Module 03-Lab13-01 - Deploy AWS Backup - Introduction <br>&emsp; + Module 03-Lab13-02.2 - Deploy infrastructure <br>&emsp; + Module 03-Lab13-03 - Create Backup plan <br>&emsp; + Module 03-Lab13-05 - Test Restore <br>&emsp; + Module 03-Lab13-06 - Clean up resources | 05/27/2026 | 05/27/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Practice Storage Gateway Lab:** <br>&emsp; + Module 03-Lab24-01.1 - Create S3 Bucket <br>&emsp; + Module 03-Lab24-01.2 - Create EC2 for Storage Gateway | 05/28/2026 | 05/28/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Practice Storage Gateway Lab (Continued):** <br>&emsp; + Module 03-Lab24-02.1 - Create Storage Gateway <br>&emsp; + Module 03-Lab24-02.2 - Create File Shares | 05/29/2026 | 05/29/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Week 6 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Acquired deep knowledge of EC2 instance types (compute-optimized, memory-optimized, storage-optimized) and differentiated between persistent EBS volumes and high-speed temporary Instance Store volumes.
+* Configured User Data scripts to run boot tasks automatically and retrieved instance metadata via the CLI.
+* Successfully set up automatic Backup Plans and verified system restoration using AWS Backup.
+* Built a hybrid File Gateway system mapping local on-premises network drives to S3 buckets.

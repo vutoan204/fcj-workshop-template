@@ -5,53 +5,21 @@ weight: 1
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
-
 ### Week 5 Objectives:
-
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Learn and implement Hybrid DNS resolution across Cloud and On-premises environments via Route 53 Resolver.
+* Connect to RDP via RDGW, test DNS resolution results, and perform lab resource cleanup.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | --- | --- | --- | --- |
+| 2 | - **Initialize Hybrid DNS Infrastructure:** <br>&emsp; + Module 02-Lab10-01 - Set up Hybrid DNS with Route 53 Resolver (Introduction) <br>&emsp; + Module 02-Lab10-02.1 - Generate Key Pair <br>&emsp; + Module 02-Lab10-02.2 - Initialize CloudFormation Template | 05/18/2026 | 05/18/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Configure Security & RDGW Connection:** <br>&emsp; + Module 02-Lab10-02.3 - Configure Security Group <br>&emsp; + Module 02-Lab10-03 - Connect to RDGW | 05/19/2026 | 05/19/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Configure DNS Outbound Integration:** <br>&emsp; + Module 02-Lab10-05 - Set up DNS <br>&emsp; + Module 02-Lab10-05.1 - Create Route 53 Outbound Endpoint | 05/20/2026 | 05/20/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Configure Resolver Rules & Inbound Endpoints:** <br>&emsp; + Module 02-Lab10-05.2 - Create Route 53 Resolver Rules <br>&emsp; + Module 02-Lab10-05.3 - Create Route 53 Inbound Endpoints | 05/21/2026 | 05/21/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Verification and Resource Cleanup:** <br>&emsp; + Module 02-Lab10-05.4 - Test results and hybrid domain resolution <br>&emsp; + Module 02-Lab10-06 - Clean up resources to minimize cost | 05/22/2026 | 05/22/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Week 5 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Used AWS CloudFormation to automatically provision infrastructure for the Hybrid DNS lab environment.
+* Created a Hybrid DNS solution capable of resolving domain names between On-Premises and AWS Cloud via Route 53 Resolver Inbound/Outbound Endpoints & Rules.
+* Established Remote Desktop Gateway (RDGW) connection successfully.
+* Cleaned up all resources to keep billing at a minimum.

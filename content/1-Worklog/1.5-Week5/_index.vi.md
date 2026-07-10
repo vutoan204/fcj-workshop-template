@@ -5,55 +5,23 @@ weight: 1
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+### Mục tiêu Tuần 5:
+* Tìm hiểu và triển khai phân giải Hybrid DNS giữa môi trường Cloud và On-premises thông qua Route 53 Resolver.
+* Kết nối tới RDP qua RDGW, kiểm tra kết quả phân giải DNS, và thực hiện dọn dẹp tài nguyên lab.
 
+### Các tác vụ cần thực hiện trong tuần này:
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | --- | --- | --- | --- |
+| 2 | - **Khởi tạo Hạ tầng Hybrid DNS:** <br>&emsp; + Module 02-Lab10-01 - Thiết lập Hybrid DNS với Route 53 Resolver (Giới thiệu) <br>&emsp; + Module 02-Lab10-02.1 - Tạo Key Pair <br>&emsp; + Module 02-Lab10-02.2 - Khởi tạo CloudFormation Template | 18/05/2026 | 18/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Cấu hình Bảo mật & Kết nối RDGW:** <br>&emsp; + Module 02-Lab10-02.3 - Cấu hình Security Group <br>&emsp; + Module 02-Lab10-03 - Kết nối tới RDGW | 19/05/2026 | 19/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Cấu hình Tích hợp DNS Hướng ra ngoài (Outbound):** <br>&emsp; + Module 02-Lab10-05 - Thiết lập DNS <br>&emsp; + Module 02-Lab10-05.1 - Tạo Route 53 Outbound Endpoint | 20/05/2026 | 20/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Cấu hình Resolver Rules & Inbound Endpoints:** <br>&emsp; + Module 02-Lab10-05.2 - Tạo Route 53 Resolver Rules <br>&emsp; + Module 02-Lab10-05.3 - Tạo Route 53 Inbound Endpoints | 21/05/2026 | 21/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Xác minh và Dọn dẹp Tài nguyên:** <br>&emsp; + Module 02-Lab10-05.4 - Kiểm tra kết quả và phân giải domain hybrid <br>&emsp; + Module 02-Lab10-06 - Dọn dẹp tài nguyên để tối ưu hóa chi phí | 22/05/2026 | 22/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Mục tiêu tuần 5:
-
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
-
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
-
-### Kết quả đạt được tuần 5:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
+### Thành tựu Tuần 5:
+* Sử dụng AWS CloudFormation để tự động khởi tạo hạ tầng cho môi trường lab Hybrid DNS.
+* Tạo thành công giải pháp Hybrid DNS có khả năng phân giải tên miền giữa On-Premises và AWS Cloud thông qua Route 53 Resolver Inbound/Outbound Endpoints & Rules.
+* Thiết lập kết nối Remote Desktop Gateway (RDGW) thành công.
+* Dọn dẹp toàn bộ tài nguyên để giảm thiểu chi phí phát sinh ở mức thấp nhất.
 
 

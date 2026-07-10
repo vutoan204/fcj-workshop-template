@@ -1,115 +1,79 @@
 ---
 title: "Proposal"
-date: 2024-01-01
+date: 2026-07-01
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-In this section, you need to summarize the contents of the workshop that you **plan** to conduct.
+# Smart Image Platform  
+## A Comprehensive AWS Serverless & Event-Driven Solution for Smart Image Storage and Processing  
 
-# IoT Weather Platform for Lab Research
-## A Unified AWS Serverless Solution for Real-Time Weather Monitoring
+### 1. Executive Summary  
+**Smart Image Platform** is an advanced cloud computing solution designed to automate the upload, secure storage, compression, and AI-powered analysis of image content. The platform fully leverages **AWS Serverless** and **Event-Driven** architecture to ensure high availability, flexible scalability, and optimized operating costs. The entire frontend interface and API layer are strictly secured at the edge, with access restricted through Amazon Cognito for internal organizational accounts.
 
-### 1. Executive Summary
-The IoT Weather Platform is designed for the ITea Lab team in Ho Chi Minh City to enhance weather data collection and analysis. It supports up to 5 weather stations, with potential scalability to 10-15, utilizing Raspberry Pi edge devices with ESP32 sensors to transmit data via MQTT. The platform leverages AWS Serverless services to deliver real-time monitoring, predictive analytics, and cost efficiency, with access restricted to 5 lab members via Amazon Cognito.
+### 2. Problem Statement  
+* **Current problem:** Traditional file management and processing systems often struggle to scale resources when the volume of uploaded files spikes. If image resizing, metadata extraction, and classification/tagging are processed synchronously on a traditional server, this causes bandwidth bottlenecks, consumes large amounts of hardware resources, and increases latency for end users.
+* **Solution:** Build a fully asynchronous, event-driven architecture on AWS. Users interact through a Web interface hosted on **Amazon Amplify**, authenticated via Amazon Cognito. Every request is protected by an AWS WAF firewall sitting in front of Amazon API Gateway. Raw storage logic uses Amazon S3, which automatically triggers a chain of background Lambda functions: one branch handles image compression/resizing to optimize file size and pushes the result to a processed storage bucket, while another branch triggers Amazon Rekognition AI to automatically extract object tags and asynchronously records the results in Amazon DynamoDB. Finally, **Amazon CloudFront** sits in front of the storage layer to deliver processed image content back to users with low latency and high security.
+* **Benefits and ROI:** Completely eliminates the cost of maintaining fixed server hardware running 24/7, thanks to the Pay-as-you-go model (paying only for actual code execution time in milliseconds and actual storage used). Saves up to 80% of infrastructure costs in the early stage by staying entirely within the AWS Free Tier. The system fully automates the AI-based image classification process, eliminating 100% of manual effort and improving the accuracy of stored metadata.
 
-### 2. Problem Statement
-### What’s the Problem?
-Current weather stations require manual data collection, becoming unmanageable with multiple units. There is no centralized system for real-time data or analytics, and third-party platforms are costly and overly complex.
+### 3. Solution Architecture  
+The platform uses tightly coordinated Serverless services following a sequential data flow, as illustrated in the execution flow diagram below:
 
-### The Solution
-The platform uses AWS IoT Core to ingest MQTT data, AWS Lambda and API Gateway for processing, Amazon S3 for storage (including a data lake), and AWS Glue Crawlers and ETL jobs to extract, transform, and load data from the S3 data lake to another S3 bucket for analysis. AWS Amplify with Next.js provides the web interface, and Amazon Cognito ensures secure access. Similar to Thingsboard and CoreIoT, users can register new devices and manage connections, though this platform operates on a smaller scale and is designed for private use. Key features include real-time dashboards, trend analysis, and low operational costs.
+![Smart Image Platform Architecture](/images/2-Proposal/architecture.jpeg)
 
-### Benefits and Return on Investment
-The solution establishes a foundational resource for lab members to develop a larger IoT platform, serving as a study resource, and provides a data foundation for AI enthusiasts for model training or analysis. It reduces manual reporting for each station via a centralized platform, simplifying management and maintenance, and improves data reliability. Monthly costs are $0.66 USD per the AWS Pricing Calculator, with a 12-month total of $7.92 USD. All IoT equipment costs are covered by the existing weather station setup, eliminating additional development expenses. The break-even period of 6-12 months is achieved through significant time savings from reduced manual work.
+* **Execution Flow Details:**
+  1. **Users** access the frontend application interface hosted on **Amazon Amplify**.
+  2. Amazon Amplify sends an authentication/login request to **Amazon Cognito**. After a successful login, the user receives a valid ID Token.
+  3. Amazon Amplify sends the request with the Token through the **AWS WAF** firewall guarding the edge layer, while **Amazon Cognito** simultaneously performs authentication with **Amazon API Gateway** (step **3.1**) via the Cognito Authorizer to verify access rights before the request is forwarded.
+  4. API Execution Layer:
+     * **4.a:** API Gateway triggers **AWS Lambda (API Handler Lambda)** to process the logic and generate a secure S3 Presigned URL granting upload permission to the client.
+     * **4.b:** In parallel, the API Handler Lambda writes an initial record of the request into **Amazon DynamoDB** to track the request's status.
+  5. The client (Amazon Amplify) uses the Presigned URL to upload the image's binary data directly to the **S3 Bucket (Raw Store)**, minimizing load on the server.
+  6. The successful file-write event in the **S3 Bucket** immediately triggers the **AWS Lambda (Image processor Lambda)** function to run asynchronously in the background.
+  7. The Lambda function performs two parallel tasks:
+     * **7.a:** Optimizes file size, compresses, resizes the image, and pushes the resulting file to the secure **processed S3 Bucket**.
+     * **7.b:** Extracts basic metadata of the file (dimensions, format, creation date) and writes a record into **Amazon DynamoDB** (the data table in the AI Analysis subsystem).
+  8. A new/updated metadata record event in DynamoDB (via DynamoDB Streams) triggers the **AWS Lambda (AI Analyzer Lambda)** for advanced analysis.
+  9. The Lambda function calls the **Amazon Rekognition** AI service directly to detect objects, automatically generate tags, and perform content moderation, then writes these AI-generated labels back into the **DynamoDB** table.
+ 
 
-### 3. Solution Architecture
-The platform employs a serverless AWS architecture to manage data from 5 Raspberry Pi-based stations, scalable to 15. Data is ingested via AWS IoT Core, stored in an S3 data lake, and processed by AWS Glue Crawlers and ETL jobs to transform and load it into another S3 bucket for analysis. Lambda and API Gateway handle additional processing, while Amplify with Next.js hosts the dashboard, secured by Cognito. The architecture is detailed below:
+### 4. Technical Implementation  
+* **Implementation phases:**
+  1. *Research and Architecture Design:* Analyze the image upload business flow, research how S3 Presigned URLs work, and design the event-driven architecture diagram (1 month).
+  2. *Cost Estimation and Safety Margin Analysis:* Use the AWS Pricing Calculator to set spending limits and configure Budget Alerts to prevent the risk of runaway infinite loops (Month 1).
+  3. *Development & Core Service Configuration:* Set up the network infrastructure, configure the DynamoDB tables, write the source code for the image-compression Lambda functions, and integrate the Rekognition AI API (Month 2).
+  4. *Frontend Integration, Testing, and Deployment:* Connect the complete React App interface, perform stress tests on the concurrent image-processing flow, clean up unused resources, and deploy the system to the actual Production environment (Month 3).
 
-![IoT Weather Station Architecture](/images/2-Proposal/edge_architecture.jpeg)
+* **Technical requirements:**
+  * *Frontend:* A Single Page Application (React.js/Next.js) using the AWS Amplify SDK or Amazon Cognito Auth SDK to manage user login sessions. Integrates the Axios library to support direct binary-stream uploads to S3 via Presigned URLs.
+  * *Backend & Cloud Infrastructure:* Lambda source code written in Python (using the Pillow/Boto3 libraries) or Node.js to optimize cold-start time. DynamoDB is configured in On-Demand mode for flexible storage. An Origin Access Control (OAC) policy is set up to protect the S3 Bucket from any unauthenticated public access.
 
-![IoT Weather Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
+### 5. Roadmap & Milestones  
+* **Month 1:** Complete theoretical research on AWS infrastructure; register a Free Tier account and configure basic security (IAM, Budgets).
+* **Month 2:** Finalize the system architecture design, successfully configure API Gateway and the DynamoDB tables, and complete the source code for the background image-processing Lambda chain.
+* **Month 3:** Build out the frontend user interface, perform end-to-end integration testing from client to cloud, write technical documentation on GitHub, and complete project acceptance.
 
-### AWS Services Used
-- **AWS IoT Core**: Ingests MQTT data from 5 stations, scalable to 15.
-- **AWS Lambda**: Processes data and triggers Glue jobs (two functions).
-- **Amazon API Gateway**: Facilitates web app communication.
-- **Amazon S3**: Stores raw data in a data lake and processed outputs (two buckets).
-- **AWS Glue**: Crawlers catalog data, and ETL jobs transform and load it.
-- **AWS Amplify**: Hosts the Next.js web interface.
-- **Amazon Cognito**: Secures access for lab users.
+### 6. Budget Estimate  
+The estimated cost is based on an MVP-scale system handling an average of under 5,000 images/month (staying entirely within the AWS perpetual Free Tier and the first 12 months):
 
-### Component Design
-- **Edge Devices**: Raspberry Pi collects and filters sensor data, sending it to IoT Core.
-- **Data Ingestion**: AWS IoT Core receives MQTT messages from the edge devices.
-- **Data Storage**: Raw data is stored in an S3 data lake; processed data is stored in another S3 bucket.
-- **Data Processing**: AWS Glue Crawlers catalog the data, and ETL jobs transform it for analysis.
-- **Web Interface**: AWS Amplify hosts a Next.js app for real-time dashboards and analytics.
-- **User Management**: Amazon Cognito manages user access, allowing up to 5 active accounts.
+* **AWS Lambda:** $0.00/month (within the free 1 million requests limit).
+* **Amazon S3:** ~$0.05/month (storing raw and compressed images, under the free 5 GB limit).
+* **Amazon DynamoDB:** $0.00/month (On-Demand mode, under the free 25 GB of static data storage).
+* **Amazon API Gateway:** $0.00/month (under the free 1 million requests limit).
+* **Amazon Rekognition:** $0.00/month (under the AWS Free Tier's free limit of 5,000 images/month).
+* **AWS WAF:** ~$5.00/month (fixed cost for the Web ACL and basic rules — can be disabled during lab testing to optimize budget).
 
-### 4. Technical Implementation
-**Implementation Phases**
-This project has two parts—setting up weather edge stations and building the weather platform—each following 4 phases:
-- Build Theory and Draw Architecture: Research Raspberry Pi setup with ESP32 sensors and design the AWS serverless architecture (1 month pre-internship)
-- Calculate Price and Check Practicality: Use AWS Pricing Calculator to estimate costs and adjust if needed (Month 1).
-- Fix Architecture for Cost or Solution Fit: Tweak the design (e.g., optimize Lambda with Next.js) to stay cost-effective and usable (Month 2).
-- Develop, Test, and Deploy: Code the Raspberry Pi setup, AWS services with CDK/SDK, and Next.js app, then test and release to production (Months 2-3).
+*Total estimated cost:* ~$0.00/month (if operating entirely within the Free Tier and disabling AWS WAF during internal testing), or ~$5.05/month (if the full WAF security shield is enabled).
 
-**Technical Requirements**
-- Weather Edge Station: Sensors (temperature, humidity, rainfall, wind speed), a microcontroller (ESP32), and a Raspberry Pi as the edge device. Raspberry Pi runs Raspbian, handles Docker for filtering, and sends 1 MB/day per station via MQTT over Wi-Fi.
-- Weather Platform: Practical knowledge of AWS Amplify (hosting Next.js), Lambda (minimal use due to Next.js), AWS Glue (ETL), S3 (two buckets), IoT Core (gateway and rules), and Cognito (5 users). Use AWS CDK/SDK to code interactions (e.g., IoT Core rules to S3). Next.js reduces Lambda workload for the fullstack web app.
+### 7. Risk Assessment  
+* **Infinite loop risk:** The image-processing Lambda overwrites the same folder after processing, repeatedly re-triggering itself and consuming a large amount of credits.
+  * *Mitigation:* Fully separate two independent S3 buckets: `raw-images-bucket` (only this bucket is permitted to trigger the Lambda) and `processed-images-bucket` (used only to store the resulting images, with no trigger configured).
+* **Denial-of-Service (DDoS) or API spam risk:** External users continuously send simulated requests, flooding the system with millions of Lambda executions.
+  * *Mitigation:* An AWS WAF shield always sits in front of the system to block suspicious IPs, alongside Rate Limiting configuration (limiting the number of requests per minute per API key) at API Gateway.
+* **Public S3 data leak risk:** Users' image files are accessed without authorization.
+  * *Mitigation:* Enable the S3 bucket's Block Public Access feature, allowing file reads only through CloudFront URLs combined with secure signed authentication.
 
-### 5. Timeline & Milestones
-**Project Timeline**
-- Pre-Internship (Month 0): 1 month for planning and old station review.
-- Internship (Months 1-3): 3 months.
-    - Month 1: Study AWS and upgrade hardware.
-    - Month 2: Design and adjust architecture.
-    - Month 3: Implement, test, and launch.
-- Post-Launch: Up to 1 year for research.
-
-### 6. Budget Estimation
-You can find the budget estimation on the [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=621f38b12a1ef026842ba2ddfe46ff936ed4ab01).  
-Or you can download the [Budget Estimation File](../attachments/budget_estimation.pdf).
-
-### Infrastructure Costs
-- AWS Services:
-    - AWS Lambda: $0.00/month (1,000 requests, 512 MB storage).
-    - S3 Standard: $0.15/month (6 GB, 2,100 requests, 1 GB scanned).
-    - Data Transfer: $0.02/month (1 GB inbound, 1 GB outbound).
-    - AWS Amplify: $0.35/month (256 MB, 500 ms requests).
-    - Amazon API Gateway: $0.01/month (2,000 requests).
-    - AWS Glue ETL Jobs: $0.02/month (2 DPUs).
-    - AWS Glue Crawlers: $0.07/month (1 crawler).
-    - MQTT (IoT Core): $0.08/month (5 devices, 45,000 messages).
-
-Total: $0.7/month, $8.40/12 months
-
-- Hardware: $265 one-time (Raspberry Pi 5 and sensors).
-
-### 7. Risk Assessment
-#### Risk Matrix
-- Network Outages: Medium impact, medium probability.
-- Sensor Failures: High impact, low probability.
-- Cost Overruns: Medium impact, low probability.
-
-#### Mitigation Strategies
-- Network: Local storage on Raspberry Pi with Docker.
-- Sensors: Regular checks and spares.
-- Cost: AWS budget alerts and optimization.
-
-#### Contingency Plans
-- Revert to manual methods if AWS fails.
-- Use CloudFormation for cost-related rollbacks.
-
-### 8. Expected Outcomes
-#### Technical Improvements: 
-Real-time data and analytics replace manual processes.  
-Scalable to 10-15 stations.
-#### Long-term Value
-1-year data foundation for AI research.  
-Reusable for future projects.
+### 8. Expected Outcomes  
+* **Technical outcomes:** The system achieves minimal response latency and a smooth interface, since heavy workloads (image compression, calling the AI tagging service) are fully offloaded to an asynchronous background processing layer running in real time.
+* **Long-term value:** Successfully build a Clean Code-standard cloud software architecture framework capable of automatically scaling (Auto-scaling) from a handful of initial users up to tens of thousands of concurrent users, with no need to reconfigure the underlying hardware management system.

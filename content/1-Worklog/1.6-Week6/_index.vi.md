@@ -5,54 +5,23 @@ weight: 1
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+### Mục tiêu Tuần 6:
+* Tìm hiểu và nắm vững chi tiết các tính năng tính toán nâng cao của EC2, bao gồm Instance Types, AMI, EBS, Instance Store, User Data, Metadata, và Auto Scaling.
+* Triển khai các chính sách sao lưu tự động bằng cách sử dụng AWS Backup.
+* Thiết kế môi trường lưu trữ hybrid thông qua AWS Storage Gateway kết nối các máy chủ on-premises với S3.
 
+### Các tác vụ cần thực hiện trong tuần này:
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | --- | --- | --- | --- |
+| 2 | - **Nghiên cứu sâu về EC2:** <br>&emsp; + Module 03-01 - Compute VM trên AWS <br>&emsp; + Module 03-01-01 - Instance type <br>&emsp; + Module 03-01-02 - AMI / Backup / Key Pair <br>&emsp; + Module 03-01-03 - Elastic block store | 25/05/2026 | 25/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Nghiên cứu sâu về EC2 (Tiếp tục):** <br>&emsp; + Module 03-01-04 - Instance store <br>&emsp; + Module 03-01-05 - User data <br>&emsp; + Module 03-01-06 - Meta data <br>&emsp; + Module 03-01-07 - EC2 auto scaling <br>&emsp; + Module-03-02 - EC2 Autoscaling - EFS/FSx - Lightsail - MGN | 26/05/2026 | 26/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Thực hành Lab AWS Backup:** <br>&emsp; + Module 03-Lab13-01 - Triển khai AWS Backup - Giới thiệu <br>&emsp; + Module 03-Lab13-02.2 - Triển khai hạ tầng <br>&emsp; + Module 03-Lab13-03 - Tạo Backup plan <br>&emsp; + Module 03-Lab13-05 - Kiểm tra khôi phục (Restore) <br>&emsp; + Module 03-Lab13-06 - Dọn dẹp tài nguyên | 27/05/2026 | 27/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Thực hành Lab Storage Gateway:** <br>&emsp; + Module 03-Lab24-01.1 - Tạo S3 Bucket <br>&emsp; + Module 03-Lab24-01.2 - Tạo EC2 cho Storage Gateway | 28/05/2026 | 28/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Thực hành Lab Storage Gateway (Tiếp tục):** <br>&emsp; + Module 03-Lab24-02.1 - Tạo Storage Gateway <br>&emsp; + Module 03-Lab24-02.2 - Tạo File Shares | 29/05/2026 | 29/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Mục tiêu tuần 6:
-
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
-
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
-
-### Kết quả đạt được tuần 6:
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
+### Thành tựu Tuần 6:
+* Tiếp thu kiến thức chuyên sâu về các loại EC2 instance (tối ưu hóa tính toán, tối ưu hóa bộ nhớ, tối ưu hóa lưu trữ) và phân biệt giữa các ổ đĩa lưu trữ bền vững EBS với ổ đĩa tạm thời tốc độ cao Instance Store.
+* Cấu hình các đoạn mã lệnh User Data để tự động chạy các tác vụ khởi động và truy xuất thành công dữ liệu metadata của instance qua CLI.
+* Thiết lập thành công các Kế hoạch Sao lưu (Backup Plans) tự động và xác thực quá trình khôi phục hệ thống bằng AWS Backup.
+* Xây dựng thành công hệ thống File Gateway lai (hybrid) giúp ánh xạ các ổ đĩa mạng nội bộ on-premises tới các S3 bucket.
 

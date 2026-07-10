@@ -5,27 +5,34 @@ weight: 1
 chapter: false
 pre: " <b> 3.1. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# SESSION POLICIES IN AMAZON EKS POD IDENTITY
+# EFFICIENT IMAGE OPTIMIZATION WITH AMAZON CLOUDFRONT AND AWS LAMBDA
 
-Amazon EKS Pod Identity has recently added the session policies feature, allowing you to narrow IAM permissions flexibly and precisely for each pod without needing to create many separate IAM roles. This is an important step forward that helps apply the principle of least privilege more effectively in large-scale Kubernetes environments.
+Images are often the heaviest resources on modern websites. Loading large images not only slows down page load times but also directly affects user experience and SEO rankings, especially Google's Largest Contentful Paint (LCP) metric.
 
-Key points to know:
+To address this challenge, AWS introduced a serverless image optimization solution combining Amazon CloudFront, AWS Lambda, and Amazon S3. This architecture enables automatic image processing on-the-fly while minimizing distribution and storage costs.
 
-* A session policy is an inline IAM policy specified when creating or updating a Pod Identity association.
-* Effective permissions = intersection between the IAM role permissions and the session policy → the session policy can only narrow permissions, not expand them.
-* Helps avoid over-permissioning when reusing a single IAM role for multiple workloads with different needs.
-* Supports both same-account and cross-account (via IAM role chaining).
-* Significantly reduces the number of IAM roles that need to be managed, helping avoid hitting IAM quota limits in large clusters.
-* Easily configured through the AWS Management Console, AWS CLI, or AWS SDK when creating an association between a Kubernetes ServiceAccount and an IAM role.
+### Core Architecture Idea
+Instead of manually creating and storing multiple resized versions of each image in an Amazon S3 bucket (which wastes storage space), the system only stores a single high-quality original image. Format conversion and image resizing are performed automatically on-the-fly when requested by the user and then cached for subsequent visits.
 
-This feature is especially useful when you have many applications running on the same IAM role but need different permission restrictions (for example: one pod only reads a specific S3 bucket, another pod only calls certain APIs).
+### Architectural Workflow
 
-...Image...
+1. **User Request:** The user accesses the website, and the browser requests an image with specific width, height, and format parameters suitable for the client's screen size via Amazon CloudFront.
+2. **CloudFront Cache Check:** Amazon CloudFront checks if the requested image version is already cached:
+   * **Cache Hit:** The image is immediately returned to the user at maximum speed.
+   * **Cache Miss:** The request is forwarded to an AWS Lambda function.
+3. **Lambda Execution:** The Lambda function fetches the high-quality original image from the Amazon S3 bucket.
+4. **On-the-Fly Processing:** The function processes the image (cropping, compressing, resizing, and converting to next-gen formats like WebP or AVIF).
+5. **Return and Cache:** The processed image is sent back to CloudFront. CloudFront delivers the image to the user and simultaneously stores it in the cache for future requests.
 
-...Link...
+### Key Advantages
+* **Enhanced Performance:** Significantly reduces the page payload size, speeding up page rendering and improving Google's Core Web Vitals.
+* **Storage and Bandwidth Cost Savings:** Eliminates the cost of storing numerous static image variations on S3. Additionally, serving lighter, optimized images reduces CloudFront's data transfer costs.
+* **Seamless Integration:** Highly compatible with modern web frameworks, particularly matching the automatic image optimization capabilities of Next.js.
 
-...Guide...
+### Architecture Diagram
+![Image Optimization Architecture](/images/3-BlogsPosted/blog1.png)
+
+### Facebook Post & References
+* **Original Blog Post on Facebook:** [AWS Study Group Post #2206231570141803](https://www.facebook.com/groups/awsstudygroupfcj/permalink/2206231570141803/)
+* **Official AWS Blog Reference:** [Image Optimization using Amazon CloudFront and AWS Lambda](https://aws.amazon.com/blogs/networking-and-content-delivery/image-optimization-using-amazon-cloudfront-and-aws-lambda/)

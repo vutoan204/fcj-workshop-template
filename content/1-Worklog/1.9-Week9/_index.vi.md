@@ -5,55 +5,23 @@ weight: 1
 chapter: false
 pre: " <b> 1.9. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+
 
 
 ### Mục tiêu tuần 9:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Tập trung chốt hạ sơ đồ kiến trúc tổng thể cho toàn bộ hệ thống xử lý ảnh và làm rõ phương án phân phối giao diện kèm cơ chế xác thực người dùng ở vòng ngoài.
 
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+### Các công việc thực hiện trong tuần:
+| Ngày | Nội dung công việc thực tế | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --- | --- | --- | --- |
+| 2 | Phác thảo và hoàn thiện phân khu Frontend trên sơ đồ; liên kết các luồng dữ liệu đi từ Amplify qua WAF để chặn lọc request xấu trước khi đẩy về API Gateway. | 15/06/2026 | 15/06/2026 | <https://docs.aws.amazon.com/amplify/> |
+| 3 | Vẽ nốt nửa còn lại của sơ đồ, kết nối các nhánh dịch vụ Backend gồm Lambda, S3, DynamoDB và tích hợp thêm cấu trúc nhận diện của Amazon Rekognition. | 16/06/2026 | 16/06/2026 | <https://aws.amazon.com/architecture/> |
+| 4 | Tìm hiểu kỹ các quy tắc cấu hình bộ lọc mã độc của AWS WAF và đối chiếu tài liệu nén/tối ưu hóa tài nguyên tĩnh khi phân phối qua Amplify. | 17/06/2026 | 17/06/2026 | <https://docs.aws.amazon.com/waf/> |
+| 5 | Đọc tài liệu của Amazon Cognito để làm rõ cơ chế sinh, kiểm tra Token (AccessToken/IDToken) và phân tách nhóm người dùng trong User Pool. | 18/06/2026 | 18/06/2026 | <https://docs.aws.amazon.com/cognito/> |
+| 6 | Thảo luận với thành viên nhóm phụ trách Frontend để giải thích cặn kẽ các thành phần, luồng đi của dữ liệu trên sơ đồ để các bạn nắm được hướng gọi API. | 19/06/2026 | 19/06/2026 |  |
 
 ### Kết quả đạt được tuần 9:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Sơ đồ kiến trúc tổng thể của hệ thống đã được vẽ xong, chuẩn hóa 100% luồng kết nối và được cả nhóm thông qua.
+* Nắm chắc giải pháp dựng hàng rào bảo mật vòng ngoài (WAF/Amplify) và cách thức quản lý danh tính bằng Cognito để áp dụng cho giai đoạn thiết kế API.
+* Làm rõ toàn bộ thắc mắc về mặt kiến trúc cho các thành viên, giúp đội Frontend có bộ khung chuẩn để bắt tay vào làm.
