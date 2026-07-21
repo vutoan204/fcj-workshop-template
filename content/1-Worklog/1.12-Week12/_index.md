@@ -8,8 +8,7 @@ pre: " <b> 1.12 </b> "
 
 
 ### Week 12 Objectives:
-
-* Research real-time data capturing mechanisms to integrate Amazon Rekognition AI, optimize global content delivery speeds using a CDN, and finalize the project report documentation.
+* Summarize test results, finalize the Worklog and templates, and compile all documentation and evaluation forms to create the final project report.
 
 
 ### Tasks Completed This Week:

@@ -6,21 +6,22 @@ chapter: false
 pre: " <b> 1.6. </b> "
 ---
 ### Week 6 Objectives:
-* Understand advanced EC2 compute features in detail, including Instance Types, AMI, EBS, Instance Store, User Data, Metadata, and Auto Scaling.
-* Deploy automated backup policies using AWS Backup.
-* Design a hybrid storage environment via AWS Storage Gateway linking on-premises servers to S3.
+* Research advanced AWS storage solutions (Glacier, Snow Family) and practice VM Import/Export for server migration.
+* Deploy enterprise Multi-AZ FSx for Windows File Server (Deduplication, Shadow copies) and Security Hub compliance auditing.
+* Automate EC2 operations via tagged Lambda functions with Slack notifications, implement condition-restricted IAM Switch Role policies, and configure KMS encryption with CloudTrail/Athena logging.
 
 ### Tasks to be carried out this week:
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | --- | --- | --- | --- |
-| 2 | - **In-depth EC2 Research:** <br>&emsp; + Module 03-01 - Compute VM on AWS <br>&emsp; + Module 03-01-01 - Instance type <br>&emsp; + Module 03-01-02 - AMI / Backup / Key Pair <br>&emsp; + Module 03-01-03 - Elastic block store | 05/25/2026 | 05/25/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 3 | - **In-depth EC2 Research (Continued):** <br>&emsp; + Module 03-01-04 - Instance store <br>&emsp; + Module 03-01-05 - User data <br>&emsp; + Module 03-01-06 - Meta data <br>&emsp; + Module 03-01-07 - EC2 auto scaling <br>&emsp; + Module-03-02 - EC2 Autoscaling - EFS/FSx - Lightsail - MGN | 05/26/2026 | 05/26/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 4 | - **Practice AWS Backup Lab:** <br>&emsp; + Module 03-Lab13-01 - Deploy AWS Backup - Introduction <br>&emsp; + Module 03-Lab13-02.2 - Deploy infrastructure <br>&emsp; + Module 03-Lab13-03 - Create Backup plan <br>&emsp; + Module 03-Lab13-05 - Test Restore <br>&emsp; + Module 03-Lab13-06 - Clean up resources | 05/27/2026 | 05/27/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 5 | - **Practice Storage Gateway Lab:** <br>&emsp; + Module 03-Lab24-01.1 - Create S3 Bucket <br>&emsp; + Module 03-Lab24-01.2 - Create EC2 for Storage Gateway | 05/28/2026 | 05/28/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 6 | - **Practice Storage Gateway Lab (Continued):** <br>&emsp; + Module 03-Lab24-02.1 - Create Storage Gateway <br>&emsp; + Module 03-Lab24-02.2 - Create File Shares | 05/29/2026 | 05/29/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 2 | - **Advanced Storage & Infrastructure Migration:** <br>&emsp; + Module 04-01 -> 04-04: AWS Storage Core Theory <br>&emsp; + Module 04-Lab14-01 -> Lab14-05: VM Import/Export migrating on-premises VMs to AWS | 05/25/2026 | 05/25/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Enterprise File Systems Implementation:** <br>&emsp; + Module 04-Lab25-2.2 -> Lab25-13: Configuring Multi-AZ FSx Windows File Server, shadow copies, quotas, and deduplication | 05/26/2026 | 05/26/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Infrastructure Security & Operations Automation:** <br>&emsp; + Module 05-01 -> 05-08: AWS Security Core Theory <br>&emsp; + Module 05-Lab18-02 -> Lab18-04: Security compliance assessment using AWS Security Hub <br>&emsp; + Module 05-Lab22-2.1 -> Lab22-7: AWS Lambda auto start/stop EC2 based on tags with Slack Webhook notifications | 05/27/2026 | 05/27/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Resource Management & Advanced IAM Permissions:** <br>&emsp; + Module 05-Lab27-2.1.1 -> Lab27-4: Resource Tags & Resource Group Management <br>&emsp; + Module 05-Lab28-2.1 -> Lab28-6: IAM Policy, Role, and Switch Roles execution <br>&emsp; + Module 05-Lab44-2 -> Lab44-5: Restricting Switch Role permissions based on Source IP and Time windows | 05/28/2026 | 05/28/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Data Encryption & Activity Auditing:** <br>&emsp; + Module 05-Lab33-2.1 -> Lab33-7: AWS KMS Encryption for S3, activity logging with AWS CloudTrail, and log querying via Amazon Athena <br>&emsp; + Module 05-Lab48-1.1 -> Lab48-4: Differentiating Access Keys vs. IAM Instance Profiles (IAM Roles) on EC2 | 05/29/2026 | 05/29/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Week 6 Achievements:
-* Acquired deep knowledge of EC2 instance types (compute-optimized, memory-optimized, storage-optimized) and differentiated between persistent EBS volumes and high-speed temporary Instance Store volumes.
-* Configured User Data scripts to run boot tasks automatically and retrieved instance metadata via the CLI.
-* Successfully set up automatic Backup Plans and verified system restoration using AWS Backup.
-* Built a hybrid File Gateway system mapping local on-premises network drives to S3 buckets.
+* Successfully migrated virtual machines from an on-premises environment to AWS via VM Import/Export.
+* Built an enterprise shared file storage system using FSx for Windows File Server with Data Deduplication and Shadow Copies.
+* Automated EC2 start/stop schedules using EventBridge and Lambda based on Resource Tags with real-time Slack notifications.
+* Audited AWS security compliance using Security Hub and implemented condition-based IAM Switch Role access (IP & Time restricted).
+* Encrypted S3 data with AWS KMS, logged API activities via CloudTrail, and performed audit log queries using Amazon Athena.

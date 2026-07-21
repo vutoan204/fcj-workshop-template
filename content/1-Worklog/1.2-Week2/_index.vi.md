@@ -5,26 +5,22 @@ weight: 1
 chapter: false
 pre: " <b> 1.2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+### Mục tiêu tuần 2:
+* Nắm vững các khái niệm kiến trúc mạng cốt lõi của AWS Virtual Private Cloud (VPC) và nguyên tắc bảo mật mạng.
+* Thiết kế và triển khai thực tế mạng VPC tùy chỉnh nhiều tầng bảo mật với các public và private subnet.
+* Cấu hình Internet Gateway (IGW), NAT Gateway, Route Tables, Security Groups, Network ACLs và EC2 Instance Connect Endpoint.
 
-
-### Mục tiêu Tuần 2:
-* Tham gia buổi hỗ trợ và hoàn thành bài thực hành xác thực tài khoản.
-* Thực hành chuyên sâu về kiểm soát chi phí trên AWS Budgets (Usage, RI, Savings Plans).
-* Tìm hiểu về các gói hỗ trợ của AWS và quy trình xử lý yêu cầu hỗ trợ.
-
-### Các công việc thực hiện trong tuần này:
-| Ngày | Nội dung công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+### Các công việc cần triển khai trong tuần này:
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
 | --- | --- | --- | --- | --- |
-| 2 | - **Bài thực hành:** Module 01-Lab01-04 - Hỗ trợ xác thực tài khoản | 25/04/2026 | 25/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 3 | - **Thực hành chuỗi bài Lab AWS Budgets:** <br>&emsp; + Module 01-Lab07-01 - Tạo ngân sách theo mẫu <br>&emsp; + Module 01-Lab07-03 - Khởi tạo ngân sách sử dụng trên AWS <br>&emsp; + Module 01-Lab07-04 - Khởi tạo ngân sách cho Thực thể đặt trước (RI) | 26/04/2026 | 26/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 4 | - **Thực hành chuỗi bài Lab AWS Budgets (Tiếp theo):** <br>&emsp; + Module 01-Lab07-05 - Khởi tạo ngân sách cho Gói tiết kiệm (Savings Plans) <br>&emsp; + Module 01-Lab07-06 - Dọn dẹp hệ thống ngân sách | 27/04/2026 | 27/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 5 | - **Thực hành chuỗi bài Lab AWS Support:** <br>&emsp; + Module 01-Lab09-01 - Tổng quan về các gói hỗ trợ của AWS <br>&emsp; + Module 01-Lab09-02 - Phân loại các loại yêu cầu hỗ trợ | 28/04/2026 | 28/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 6 | - **Thực hành chuỗi bài Lab AWS Support (Tiếp theo):** <br>&emsp; + Module 01-Lab09-03 - Thay đổi và nâng cấp gói dịch vụ hỗ trợ <br>&emsp; + Module 01-Lab09-04 - Quản lý và theo dõi các yêu cầu hỗ trợ | 29/04/2026 | 29/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 2 | - **Tìm hiểu khái niệm lý thuyết VPC:** <br>&emsp; + Module 02-01 - Tổng quan về AWS Virtual Private Cloud <br>&emsp; + Module 02-02 - Khái niệm bảo mật VPC & tính năng Multi-VPC <br>&emsp; + Module 02-03 - Kết nối mạng nâng cao: VPN, DirectConnect, LoadBalancer | 27/04/2026 | 27/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Thực hành khởi tạo hạ tầng VPC cốt lõi:** <br>&emsp; + Module 02-Lab03-01 - Khởi tạo Amazon VPC & cấu hình AWS VPN Site-to-Site <br>&emsp; + Module 02-Lab03-01.1 - Thiết kế và phân bổ các Subnet <br>&emsp; + Module 02-Lab03-01.2 - Cấu hình Route Tables định tuyến traffic | 28/04/2026 | 28/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Thực hành tích hợp Gateway:** <br>&emsp; + Module 02-Lab03-01.3 / Lab03-03.3 - Tạo và gán Internet Gateway (IGW) <br>&emsp; + Module 02-Lab03-01.4 / Lab03-04.3 - Cấu hình NAT Gateway cho Private Subnet truy cập outbound <br>&emsp; + Module 02-Lab03-03.4 - Cấu hình bảng định tuyến Internet | 29/04/2026 | 29/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Thực hành bảo mật và lọc lưu lượng mạng:** <br>&emsp; + Module 02-Lab03-02.1 / Lab03-03.5 - Cấu hình bảo mật cấp instance với Security Groups <br>&emsp; + Module 02-Lab03-02.2 - Cấu hình tường lửa cấp subnet với Network ACLs | 30/04/2026 | 30/04/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Khởi tạo EC2 Instance & kết nối Endpoint:** <br>&emsp; + Module 02-Lab03-04.1 - Tạo EC2 Instance trong các Subnet <br>&emsp; + Module 02-Lab03-04.2 - Kiểm tra kết nối <br>&emsp; + Module 02-Lab03-04.5 - Cấu hình EC2 Instance Connect Endpoint | 01/05/2026 | 01/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Kết quả đạt được trong Tuần 2:
-* Hoàn thành bài thực hành xác thực tài khoản và nắm vững các cấu hình bảo mật xác thực đa yếu tố (MFA).
-* Khởi tạo thành công nhiều danh mục ngân sách (Usage, RI, Savings Plans) trên AWS Budgets để chủ động đưa ra cảnh báo khi chi phí có nguy cơ vượt ngưỡng.
-* Định hình rõ các cấp độ của các Gói hỗ trợ AWS (AWS Support Packages) và làm chủ quy trình mở cũng như quản lý các trường hợp hỗ trợ kỹ thuật.
+### Kết quả đạt được tuần 2:
+* Nắm vững mô hình thiết kế VPC, bao gồm logic định tuyến với Route Tables, Internet Gateway và NAT Gateway.
+* Làm chủ các cơ chế bảo mật: phân định rõ ràng giữa Security Groups (stateful) và Network ACLs (stateless).
+* Triển khai thành công mạng VPC hoàn chỉnh gồm các Public Subnet và Private Subnet tách biệt.
+* Cấu hình và kết nối an toàn tới EC2 Instance qua EC2 Instance Connect Endpoint mà không cần Bastion Host hay Public IP.

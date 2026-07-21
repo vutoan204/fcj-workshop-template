@@ -1,122 +1,104 @@
 ---
-title: "Testing & Verification"
+title: "Testing and Verification"
 date: 2024-01-01
-weight: 7
+weight: 9
 chapter: false
-pre: " <b> 5.7. </b> "
+pre: " <b> 5.9. </b> "
 ---
 
+# Test Smart Image Platform
 
-# Testing & Verification of the Smart Image Platform
+The following steps use the CDK `staging` deployment. Substitute equivalent names when resources were created manually.
 
-Now that the entire serverless infrastructure is deployed, follow these steps to test the end-to-end functionality of the platform, inspect runtime logs, review monitoring dashboards, and perform validation under error conditions.
+## 1. User authentication
 
----
+1. Open the Amplify branch URL or a custom domain pointing to Amplify.
+2. Sign up with an email, full name, and a password satisfying the configured policy.
+3. Open the Cognito email, enter the confirmation code, and complete registration.
+4. For group testing, open Cognito Console → User Pool → **Users**, select the account, and add it to `user` or `admin`.
+5. Sign in again after assigning the group so a new token contains `cognito:groups`.
+6. In DevTools → Network, verify that protected requests include `Authorization`; do not expose the token in workshop screenshots.
 
-### Step 1: User Account Registration & Login
+![Screen displayed after sign-up confirmation](/images/5-Workshop/5.7-Testing-Validation/react_app_login.png)
 
-1. Open your browser and navigate to the **AWS Amplify App Domain URL** generated in the previous step.
-2. Click **Sign Up** to create a new user account.
-3. Enter your details: **Full Name**, **Email Address**, and **Password**. Click **Sign Up**.
-4. Check your email inbox. You should receive a verification email from Cognito containing a confirmation code.
-5. Enter the code on the verification page to activate your account.
-6. Return to the log in screen and log in with your email and password.
+## 2. Image upload and processing
 
-![React App Login](/images/5-Workshop/5.7-Testing-Validation/react_app_login.png)
+1. Select a valid JPEG or PNG in Upload Images.
+2. Choose **Upload** and verify that presigned URL generation succeeds.
+3. Confirm that the browser PUTs the object directly to the raw bucket; API Gateway/Lambda does not receive the full image binary.
+4. Open the raw bucket and verify the object under `users/<user-id>/`.
+5. Follow the image status in the UI; processing is asynchronous, so poll until a terminal state is reached.
+6. In the processed bucket, inspect `resized/` and `thumbnails/` under `users/<user-id>/`.
+7. Compare original, resized, and thumbnail object sizes to verify that Sharp produced outputs rather than copying the file.
 
----
+![Output folders in the staging processed bucket](/images/5-Workshop/5.7-Testing-Validation/s3_processed_objects.png)
 
-### Step 2: Upload an Image
+## 3. Metadata and Rekognition
 
-1. On the user dashboard, click the **Upload Image** button.
-2. Choose a high-quality JPEG/PNG image from your local computer (e.g., an image containing landscape elements like mountains, water, or cars).
-3. Click **Upload**.
-4. The client application calls API Gateway, receives an S3 Presigned PUT URL, uploads the binary image directly to the Raw S3 bucket under the prefix `users/<userId>/`, and changes state to uploading.
+1. Open DynamoDB Console → **Tables** → `SmartImage-Images-staging`.
+2. Choose **Explore table items** and locate the item for the uploaded user/image.
+3. Open the item in view mode and inspect:
 
----
+- `PK`/`SK` follow the access pattern.
+- `status` reflects pipeline progress.
+- `thumbnailKey`/`resizedKey` point to the processed bucket.
+- `aiTags`, moderation labels/status, and EXIF are present after their respective steps complete.
 
-### Step 3: Verify the S3 Image Processing Trigger
+![Inspect aiTags on a DynamoDB item](/images/5-Workshop/5.7-Testing-Validation/dynamodb_item_tags.png)
 
-1. Open the [Amazon S3 Console](https://s3.console.aws.amazon.com/).
-2. Open the `smartimage-processed-bucket-<your-name>`.
-3. Check the file list. You should see a newly generated folder containing a scaled thumbnail version of the image you just uploaded (suffixed with `-thumbnail` or resized dimensions).
-4. This confirms that the **S3 trigger** successfully launched the `SmartImage-ImageProcessor` Lambda function to resize the image.
+Use the screen for observation only; do not edit `aiTags` manually.
 
-![Processed S3 Bucket Objects](/images/5-Workshop/5.7-Testing-Validation/s3_processed_objects.png)
+4. If image-processing metadata exists but AI labels do not, inspect the DynamoDB stream, AiAnalyzer event source mapping, and logs before attributing the problem to Rekognition.
 
----
+## 4. Frontend gallery
 
-### Step 4: Verify the DynamoDB AI Tagging Flow
+1. Return to the frontend and open **My Gallery**.
+2. Refresh or wait for the next poll, then select the processed image.
+3. Inspect its preview, state, metadata, and AI labels.
+4. Open/download the image; the returned value should be an expiring presigned GET URL, not a permanent public S3 URL.
+5. Open **Community Gallery** and verify that `GET /v1/images/public` does not require a token.
+6. Sign out and open My Gallery; the protected route should require authentication.
 
-1. Open the [Amazon DynamoDB Console](https://console.aws.amazon.com/dynamodb/).
-2. Select your `SmartImage-Images` table and click **Explore table items**.
-3. Locate the item associated with your user ID and uploaded image.
-4. Verify the following attributes inside the database record:
-   * `status`: Should be updated to `COMPLETED` or `PROCESSED`.
-   * `tags` (or labels): Should contain a list of AI tags generated by Amazon Rekognition (e.g., `["Mountain", "Sky", "Cloud", "Outdoor"]`).
-   * `moderationStatus`: Should show `APPROVED` or `SAFE`.
-5. This confirms that:
-   * The database record was successfully updated by the Image Processor.
-   * The **DynamoDB Stream trigger** fired the `SmartImage-AIAnalyzer` Lambda.
-   * The AI Analyzer successfully called **Amazon Rekognition** and saved the tags back into DynamoDB.
+![A COMPLETED image with Rekognition labels](/images/5-Workshop/5.7-Testing-Validation/react_app_dashboard.png)
 
-![DynamoDB Item AI Tags](/images/5-Workshop/5.7-Testing-Validation/dynamodb_item_tags.png)
+## 5. Logs, metrics, and alarms
 
----
+1. Open CloudWatch Console → **Logs** → **Log groups**.
+2. Open the latest stream for each Lambda, match its timestamp to the upload, and find the same request/image ID.
+3. Inspect API access logs for method, path, and status code.
+4. Open **Dashboards** → `SmartImage-staging-Operations` and select a time range covering the test.
+5. Inspect:
 
-### Step 5: Test Frontend Search & Gallery
+- Lambda log groups corresponding to `SmartImage-ApiHandler-staging`, `SmartImage-ImageProcessor-staging`, and `SmartImage-AiAnalyzer-staging`.
+- API access log group `/aws/apigateway/SmartImage-staging`.
+- Dashboard `SmartImage-staging-Operations`.
+- SNS topic `SmartImage-Alarms-staging`; confirm the email subscription before expecting notifications.
+- SQS queues `SmartImage-ImageProcessorDlq-staging` and `SmartImage-AiAnalyzerDlq-staging`.
 
-1. Go back to your React Web Application.
-2. Refresh the **Gallery** tab. The frontend requests the images list from `/v1/images`, executing the `api-handler` Lambda. The Lambda queries DynamoDB and generates secure **S3 Presigned GET URLs** for all image thumbnails.
-3. You should see your uploaded image displayed.
-4. Expand the image detail card to see the AI tags listed underneath it.
-5. Click the download/view original button. The frontend requests a download link, and the backend generates a short-term S3 Presigned GET URL for the original raw file.
-6. Type one of the AI tags (e.g., `Mountain`) in the search bar and click **Search**. Verify that the gallery filters correctly.
+The Lambda Errors alarm uses a five-minute `Sum`, threshold 5, and **GreaterThanThreshold**; at least six errors in one period are required to enter ALARM.
 
-![React App Dashboard](/images/5-Workshop/5.7-Testing-Validation/react_app_dashboard.png)
+A successful invocation does not prove that alarms or DLQs work. Both require an error that the handler does not swallow, and the alarm also requires enough failures to exceed its threshold.
 
----
+## 6. Failure testing
 
-### Step 6: Inspect Runtime Logs (CloudWatch Logs)
+### A. Frontend validation
 
-To verify the internal processing logs and execution detail:
-1. Open the [Amazon CloudWatch Console](https://console.aws.amazon.com/cloudwatch/).
-2. In the left navigation pane, click **Logs** -> **Log groups**.
-3. Search for `/aws/lambda/SmartImage-ImageProcessor`. Select the log group and open the latest log stream.
-4. Verify that the logs show successful execution (e.g., loading `sharp`, loading S3 object, writing resized buffer, and updating DynamoDB status).
-5. Repeat the same steps for the `/aws/lambda/SmartImage-AIAnalyzer` log group, ensuring you see the response labels returned from the **Amazon Rekognition API**.
+1. Select an unsupported extension such as `.txt`.
+2. Verify that the frontend rejects it before upload.
+3. Confirm that the raw bucket has no new object. This does not create a Lambda error and cannot test the alarm.
 
----
+### B. Backend validation
 
-### Step 7: Review Metrics on Operational Dashboard
+1. In `staging` only, upload an object with an image extension but corrupt content directly under `users/<test-user>/` in the raw bucket.
+2. Open ImageProcessor logs and verify that validation/Sharp reports the failure.
+3. Confirm that the test item is not shown as a valid `COMPLETED` image.
 
-If you deployed the monitoring stack:
-1. In the CloudWatch Console, select **Dashboards** from the left menu.
-2. Open the `SmartImage-dev-Operations` dashboard.
-3. Verify that the **Graph Widgets** display real-time statistics:
-   * **Invocations:** Spikes matching your S3 uploads.
-   * **Errors:** Currently showing `0` (healthy).
-   * **Duration:** Average execution times for the API Handler, Image Processor, and AI Analyzer Lambdas.
-   * **API Gateway Latency:** Average latency is well below 1 second.
+### C. Current test limitation
 
----
+`ImageProcessor` and `AiAnalyzer` currently catch errors without rethrowing in some paths. When Lambda treats the invocation as successful, the `Errors` metric, retries, and DLQ do not behave like an unhandled failure. Report SNS/DLQ validation as successful only after correcting error propagation or running a separate controlled alarm test.
 
-### Step 8: Error & Failure Testing
+## 7. Record evidence
 
-We will perform failure testing to ensure the application handles validation and runtime errors gracefully:
-1. **Upload an Unsupported File:**
-   * Go to the React frontend dashboard and click **Upload Image**.
-   * Select a text file (e.g., `test.txt`) or a zip file instead of an image, and attempt to upload it.
-   * The frontend application will either block the upload or attempt to submit.
-2. **Examine the Image Processor Log:**
-   * Open the `/aws/lambda/SmartImage-ImageProcessor` CloudWatch log group.
-   * Locate the latest log stream corresponding to the text file upload.
-   * You should see a validation error logged: e.g., `Error: Invalid file format` or `Sharp: Input buffer has an unsupported image format`.
-3. **Verify Error Metrics and Alerts:**
-   * Check the `SmartImage-dev-Operations` CloudWatch Dashboard. You should see a spike of `1` in the **Errors** metric of the Image Processor function.
-   * Because of this error, if the error count exceeds the alarm threshold (e.g., 5 errors in 5 minutes, or if we trigger it repeatedly), the custom CloudWatch Alarm `SmartImage-dev-ImageProcessor-Errors` will transition to **In Alarm** state.
-   * You will receive an automated email alert sent to your subscribed SNS topic endpoint.
-4. **Dead Letter Queue (DLQ) Check:**
-   * Open the [Amazon SQS Console](https://console.aws.amazon.com/sqs/).
-   * Select the queue `SmartImage-ImageProcessorDlq-dev`.
-   * You should see a message available in the queue representing the failed execution, allowing administrators to audit the failure.
+Record the timestamp, image ID, API status, raw/processed keys, DynamoDB state, and matching log stream. Distinguish **observed** results from **expected** results; do not report an alarm or DLQ as successful without Console evidence.
+
+> Do not generate repeated failures in production. Remove test objects and items after validation.

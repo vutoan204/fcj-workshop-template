@@ -1,83 +1,84 @@
 ---
 title: "Resource Cleanup"
 date: 2024-01-01
-weight: 8
+weight: 10
 chapter: false
-pre: " <b> 5.8. </b> "
+pre: " <b> 5.10. </b> "
 ---
 
 # Resource Cleanup
 
-To avoid incurring unexpected charges on your AWS account after completing the workshop, follow these steps to delete the created resources.
+Delete resources only from the intended account, Region, and environment. Do not destroy production before reviewing data-retention requirements.
 
----
+## A. CDK-managed resources
 
-### Method A: Manual Deletion via AWS Management Console
+From the `AWS-Project` root, verify the `staging` stack list:
 
-Follow these steps to delete resources in reverse order to ensure all dependency barriers are cleared.
+```bash
+npm run --workspace=infrastructure cdk -- list -c environment=staging
+```
 
-#### Step 1: Delete AWS Amplify Application
-1. Open the [AWS Amplify Console](https://console.aws.amazon.com/amplify/).
-2. Select your `smart-image-frontend` application.
-3. Click **Actions** -> **Delete app**.
-4. Type `delete` to confirm, then click **Delete**.
+Then run:
 
-#### Step 2: Delete Amazon API Gateway
-1. Open the [API Gateway Console](https://console.aws.amazon.com/apigateway/).
-2. Locate `SmartImage-API` in your API list.
-3. Click **Actions** -> **Delete**.
-4. Confirm deletion.
+```bash
+npm run --workspace=infrastructure destroy -- -c environment=staging
+```
 
-#### Step 3: Delete AWS Lambda Functions
-1. Open the [AWS Lambda Console](https://console.aws.amazon.com/lambda/).
-2. Search for the following functions:
-   * `SmartImage-ApiHandler`
-   * `SmartImage-ImageProcessor`
-   * `SmartImage-AIAnalyzer`
-3. Select them, click **Actions** -> **Delete**.
-4. Confirm deletion.
+1. Review the CDK stack list and verify that every name ends in `staging`.
+2. Confirm when CDK prompts.
+3. Follow CloudFormation Events. If a stack reaches `DELETE_FAILED`, inspect its first failed event to identify the dependency.
 
-#### Step 4: Delete Amazon DynamoDB Tables
-1. Open the [Amazon DynamoDB Console](https://console.aws.amazon.com/dynamodb/).
-2. Click **Tables** from the left-hand menu.
-3. Select `SmartImage-Images`, `SmartImage-UserQuotas`, and `SmartImage-UserProfiles`.
-4. Click **Delete**.
-5. Type `delete` to confirm.
+In `staging`, both S3 buckets use `autoDeleteObjects` and `DESTROY`, so CDK can empty and remove them during destruction. Manual emptying is unnecessary unless the deployment was changed or the custom resource fails.
 
-#### Step 5: Delete Amazon S3 Buckets
-*Note: S3 buckets must be completely empty before they can be deleted.*
-1. Open the [Amazon S3 Console](https://s3.console.aws.amazon.com/).
-2. Select your raw bucket `smartimage-raw-bucket-<your-name>`.
-3. Click **Empty** and follow the instructions to confirm emptying.
-4. Once emptied, click **Delete**, type the bucket name, and confirm.
-5. Repeat the exact same steps to empty and delete your processed bucket `smartimage-processed-bucket-<your-name>`.
+After destruction, inspect CloudFormation and the relevant services to verify that all six stacks were deleted. Do not manually delete stack resources while destroy is still running.
 
-#### Step 6: Delete Amazon Cognito User Pool
-1. Open the [Amazon Cognito Console](https://console.aws.amazon.com/cognito/).
-2. Select `SmartImage-UserPool`.
-3. Click **Delete**.
-4. Confirm by entering the User Pool name.
+## B. Resources created manually in the Console
 
-#### Step 7: Delete IAM Roles & Policies
-1. Open the [IAM Console](https://console.aws.amazon.com/iam/).
-2. Click **Roles**, search for `SmartImage-` to find your Lambda execution roles, select them, and click **Delete**.
-3. Click **Policies**, search for `SmartImage-`, select the custom policies, and click **Delete**.
+`cdk destroy` does not remove resources created separately in the Console. Delete them in dependency-aware order.
 
-#### Step 8: Delete CloudWatch Dashboards, Alarms & SNS Topics
-1. Open the [Amazon CloudWatch Console](https://console.aws.amazon.com/cloudwatch/).
-2. In the left panel, click **Dashboards**, select `SmartImage-dev-Operations`, and click **Delete**.
-3. Click **Alarms** -> **All alarms**, select any alarm starting with `SmartImage-dev-`, and click **Delete**.
-4. Open the [Amazon SNS Console](https://console.aws.amazon.com/sns/).
-5. Click **Topics**, select `SmartImage-Alarms-dev`, and click **Delete**.
+### 1. Amplify and WAF
 
----
+1. Open Amplify Console, select the `staging` app, choose **App settings** → **Delete app**, and complete the confirmation.
+2. Open WAF Console and select the Web ACL in `ap-southeast-1`.
+3. Remove its API Gateway stage association, then delete the Web ACL. Do not remove a Web ACL shared by another application.
 
-### Method B: Automated Deletion via Infrastructure-as-Code (AWS CDK)
+### 2. API Gateway and triggers
 
-If you deployed the stack using the AWS Cloud Development Kit (CDK):
-1. **Empty S3 Buckets:** You must still empty your raw and processed S3 buckets manually on the console first (as S3 does not allow CloudFormation to delete non-empty buckets unless specifically configured with a force-delete policy).
-2. **Execute CDK Destroy:** In your local development environment terminal, run the following command from the root of your CDK project:
-   ```bash
-   cdk destroy --all
-   ```
-3. Type `y` (yes) to confirm. This will automatically delete the API Gateway, Lambda functions, Cognito User Pools, IAM roles/policies, SQS DLQs, CloudWatch alarms, and operational dashboards in a single command.
+1. Open API Gateway, select `SmartImage-API-staging`, verify the API ID, and choose **Delete**.
+2. Open the raw S3 bucket → **Properties** → **Event notifications** and delete the ImageProcessor notification.
+3. Open the AiAnalyzer Lambda → **Configuration** → **Triggers** and delete the DynamoDB event source mapping.
+4. Verify that no enabled mapping remains before deleting the function.
+
+### 3. Lambda, logs, and queues
+
+1. In Lambda Console, delete the three manually created business functions. Delete long-name provider functions only when they are known to belong to this lab/stack.
+2. In CloudWatch Logs, delete the three function log groups and `/aws/apigateway/SmartImage-staging` if audit logs do not need retention.
+3. In SQS, delete `SmartImage-ImageProcessorDlq-staging` and `SmartImage-AiAnalyzerDlq-staging` after reviewing or exporting messages needed for analysis.
+
+### 4. DynamoDB and S3
+
+1. In DynamoDB, select each of the three `staging` tables.
+2. Review backup/PITR requirements, create an on-demand backup if data must be retained, and choose **Delete table**.
+3. For the processed bucket, choose **Empty**, complete the confirmation, and then **Delete bucket**.
+4. For the versioned raw bucket, use **Empty** to remove current objects, object versions, and delete markers before deleting the bucket.
+5. If Empty does not finish, enable **Show versions** and inspect remaining versions/delete markers.
+
+### 5. Cognito, monitoring, and IAM
+
+1. Open the correct `staging` User Pool in Cognito, ensure no other app uses it, and choose **Delete**. Its app client and groups are removed with the pool.
+2. Delete CloudWatch dashboards and alarms prefixed `SmartImage-staging`.
+3. Delete SNS subscriptions and then topic `SmartImage-Alarms-staging`.
+4. Delete the three workshop IAM roles after Lambda no longer uses them; delete only inline/custom policies created for the lab.
+5. Do not delete `AdministratorAccess`, service-linked roles, or policies used by other resources.
+
+## C. Post-cleanup verification
+
+- Recheck `ap-southeast-1` and any other Region used during the workshop.
+- Search for resources with the `SmartImage` prefix/tag and `staging` environment.
+- Inspect CloudFormation stacks in `DELETE_FAILED`.
+- Check S3 object versions, CloudWatch Logs, SQS, SNS, WAF, and Amplify.
+- Monitor Billing/Cost Explorer over the following days because cost data can be delayed.
+
+Resource Explorer or Resource Groups Tag Editor can help search for `SmartImage`/`staging`, but also inspect S3, CloudWatch Logs, and retained resources directly because search results may not include every service immediately.
+
+> Production applies `RETAIN` to selected buckets, tables, and the User Pool. `cdk destroy` does not remove retained resources. Do not claim zero cost until Billing confirms it and no out-of-stack resources remain.

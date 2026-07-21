@@ -6,22 +6,27 @@ chapter: false
 pre: " <b> 5. </b> "
 ---
 
+# Workshop Smart Image Platform
 
-# Lab Thiết Lập Smart Image Platform
+Workshop gồm hai phương thức triển khai/tham khảo và một phần trình diễn kết quả:
 
-#### Tổng quan
+1. **Triển khai bằng AWS CDK:** luồng chính, phản ánh cấu hình trong dự án `AWS-Project` và là nguồn chuẩn khi có khác biệt.
+2. **Tham khảo trên AWS Console (tùy chọn):** minh họa vị trí và ý nghĩa của các cấu hình mà CDK tạo. Các bước này có thể được giản lược và không nên thực hiện lại trong cùng tài khoản/Region nếu stack CDK đã tồn tại.
+3. **Giới thiệu và xác minh sản phẩm:** trình bày deployment trên domain thực, các tính năng quan sát được và cách đối chiếu với tài nguyên AWS.
 
-**Smart Image Platform** là một ứng dụng Serverless và hướng sự kiện (Event-Driven) trên AWS, được thiết kế để tự động hóa việc tải ảnh lên, xử lý ảnh (tạo thumbnail, thay đổi kích thước) và phân loại, gắn nhãn thông minh bằng AI.
+Các ví dụ và ảnh chụp sử dụng Region `ap-southeast-1` và môi trường `staging`. Tên vật lý có thể chứa hậu tố do CDK hoặc CloudFormation tạo.
 
-Trong bài lab này, bạn sẽ học cách thiết lập và cấu hình toàn bộ hạ tầng của nền tảng **từng bước một bằng tay trên AWS Management Console**. Điều này giúp bạn có cái nhìn chi tiết và trực quan nhất về cách các dịch vụ liên kết với nhau, từ xác thực người dùng, bắt sự kiện S3, chạy Lambda và gọi dịch vụ AI.
+> **Quan trọng:** Không trộn tài nguyên tạo thủ công với tài nguyên do CDK quản lý trong cùng môi trường. CDK không tự quản lý hoặc xóa các tài nguyên được tạo riêng trên Console.
 
-#### Nội dung
+## Nội dung
 
-1. [Tổng quan Workshop](5.1-Workshop-overview/)
+1. [Tổng quan và kiến trúc](5.1-Workshop-overview/)
 2. [Điều kiện tiên quyết](5.2-Prerequisites/)
-3. [Cấu hình Storage & Cơ sở dữ liệu](5.3-Storage-Database/)
-4. [Xác thực người dùng với Amazon Cognito](5.4-Cognito-Auth/)
-5. [Backend Serverless & Kích hoạt Trigger](5.5-Backend-Serverless/)
-6. [Triển khai Frontend bằng AWS Amplify](5.6-Frontend-Amplify/)
-7. [Kiểm thử & Xác minh luồng hoạt động](5.7-Testing-Validation/)
-8. [Dọn dẹp tài nguyên](5.8-Cleanup/)
+3. [Phần I – Triển khai bằng AWS CDK](5.3-CDK-Deployment/)
+4. [Phần II – Storage và Database trên Console (tùy chọn)](5.7-Storage-Database/)
+5. [Cognito trên Console (tùy chọn)](5.4-Cognito-Auth/)
+6. [Backend Serverless trên Console (tùy chọn)](5.5-Backend-Serverless/)
+7. [Amplify Hosting trên Console (tùy chọn)](5.6-Frontend-Amplify/)
+8. [Giới thiệu sản phẩm trên domain thực](5.8-Product-Showcase/)
+9. [Kiểm thử và xác minh](5.9-Testing-Validation/)
+10. [Dọn dẹp tài nguyên](5.8-Cleanup/)

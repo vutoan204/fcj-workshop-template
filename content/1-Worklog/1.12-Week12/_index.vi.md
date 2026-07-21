@@ -9,7 +9,7 @@ pre: " <b> 1.12 </b> "
 
 ### Mục tiêu tuần 12:
 
-* Nghiên cứu cơ chế bắt dữ liệu thời gian thực để tích hợp AI Amazon Rekognition, tối ưu tốc độ phân phối nội dung toàn cầu bằng CDN và hoàn thiện hồ sơ báo cáo đồ án.
+* Tóm tắt kết quả kiểm thử, hoàn thiện Worklog, các biểu mẫu (template) và tổng hợp toàn bộ hồ sơ, phiếu đánh giá để đóng gói quyển báo cáo đồ án.
 
 
 ### Các công việc thực hiện trong tuần:

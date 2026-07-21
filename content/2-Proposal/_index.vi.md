@@ -6,74 +6,110 @@ chapter: false
 pre: " <b> 2. </b> "
 ---
 
-# Smart Image Platform  
-## Giải pháp AWS Serverless & Event-Driven toàn diện cho hệ thống lưu trữ và xử lý ảnh thông minh  
+# Smart Image Platform
+## Nền tảng lưu trữ và xử lý ảnh theo kiến trúc AWS Serverless và Event-Driven
 
-### 1. Tóm tắt điều hành  
-**Smart Image Platform** là giải pháp điện toán đám mây cao cấp được thiết kế nhằm mục đích tự động hóa quy trình tải lên, lưu trữ an toàn, nén và phân tích nội dung hình ảnh thông qua Trí tuệ nhân tạo (AI). Nền tảng tận dụng tối đa sức mạnh của kiến trúc không máy chủ (**AWS Serverless**) và hướng sự kiện (**Event-Driven**) nhằm đảm bảo tính sẵn sàng cao, khả năng mở rộng quy mô linh hoạt và tối ưu hóa chi phí vận hành. Toàn bộ hệ thống giao diện và phân hệ API được bảo mật nghiêm ngặt từ tầng biên, giới hạn quyền truy cập thông qua Amazon Cognito dành cho các tài khoản nội bộ tổ chức.
+### 1. Tóm tắt
 
-### 2. Tuyên bố vấn đề  
-* **Vấn đề hiện tại:** Các hệ thống quản lý và xử lý tệp tin truyền thống thường gặp khó khăn lớn trong việc co dãn tài nguyên khi lượng tệp tin tải lên tăng đột biến. Quy trình resize ảnh, trích xuất metadata và gắn thẻ (tagging) phân loại ảnh nếu xử lý đồng bộ trên server truyền thống sẽ gây nghẽn băng thông, tiêu tốn tài nguyên phần cứng lớn và tăng độ trễ (latency) cho người dùng cuối. 
-* **Giải pháp:** Xây dựng một kiến trúc bất đồng bộ hoàn toàn dựa trên sự kiện kích hoạt của AWS. Người dùng thực hiện tương tác qua giao diện Web được host trên **Amazon Amplify**, xác thực qua Amazon Cognito. Mọi yêu cầu được bảo vệ bởi tường lửa AWS WAF đứng trước Amazon API Gateway. Logic lưu trữ thô sử dụng Amazon S3, kích hoạt tự động các chuỗi Lambda function ngầm: một nhánh xử lý nén/resize ảnh tối ưu dung lượng đẩy sang bucket lưu trữ kết quả, một nhánh kích hoạt Amazon Rekognition AI tự động bóc tách nhãn vật thể và ghi nhận kết quả bất đồng bộ vào cơ sở dữ liệu Amazon DynamoDB. Cuối cùng, **Amazon CloudFront** đứng trước lớp lưu trữ để phân phối nội dung ảnh đã xử lý về lại người dùng với độ trễ thấp và bảo mật cao.
-* **Lợi ích và hoàn vốn đầu tư (ROI):** Loại bỏ hoàn toàn chi phí duy trì phần cứng server cố định 24/7 nhờ cơ chế Pay-as-you-go (chỉ trả tiền trên từng mili-giây chạy code và dung lượng lưu trữ thực tế). Tiết kiệm đến 80% chi phí hạ tầng trong giai đoạn đầu nhờ nằm trọn trong gói AWS Free Tier. Hệ thống tự động hóa hoàn toàn quy trình phân loại ảnh bằng AI, giúp giảm tải 100% thao tác thủ công và nâng cao độ chính xác của metadata lưu trữ.
+**Smart Image Platform** hỗ trợ tải lên, lưu trữ, xử lý và phân tích nội dung hình ảnh trên AWS. Hệ thống sử dụng kiến trúc serverless và hướng sự kiện để tách các yêu cầu tương tác với người dùng khỏi những tác vụ xử lý ảnh mất nhiều thời gian.
 
-### 3. Kiến trúc giải pháp  
-Nền tảng sử dụng các dịch vụ Serverless phối hợp chặt chẽ theo luồng dữ liệu số hóa tuần tự, được biểu diễn qua sơ đồ luồng hoạt động dưới đây:
+Ứng dụng React được triển khai bằng AWS Amplify Hosting. Amazon Cognito đảm nhiệm đăng ký, xác minh email, đăng nhập và phân quyền người dùng. API Gateway, Lambda, Amazon S3, DynamoDB Streams và Amazon Rekognition tạo thành luồng xử lý chính. AWS WAF bảo vệ API REST, trong khi CloudWatch, X-Ray và Amazon SNS hỗ trợ theo dõi và cảnh báo vận hành.
 
-![Smart Image Platform Architecture](/images/2-Proposal/architecture.jpeg)
+Toàn bộ hạ tầng backend được định nghĩa bằng AWS CDK, giúp cấu hình giữa các môi trường có thể được quản lý và triển khai lặp lại. Phiên bản hiện tại sử dụng S3 presigned URL để tải ảnh lên và đọc ảnh riêng tư; CloudFront dành riêng cho processed bucket chưa được bật.
 
-* **Chi tiết luồng vận hành (Execution Flow):**
-  1. Người dùng **(Users)** truy cập giao diện ứng dụng frontend được host trên **Amazon Amplify**.
-  2. Amazon Amplify gửi yêu cầu xác thực và đăng nhập tới **Amazon Cognito**. Sau khi đăng nhập thành công, người dùng nhận về ID Token hợp lệ.
-  3. Amazon Amplify gửi request kèm Token thông qua tường lửa **AWS WAF** đứng bảo vệ tầng biên, đồng thời **Amazon Cognito** thực hiện xác thực song song với **Amazon API Gateway** (bước **3.1**) thông qua Cognito Authorizer để kiểm tra quyền truy cập trước khi request được chuyển tiếp.
-  4.Lớp thực thi API:
-     * **4.a:** API Gateway kích hoạt **AWS Lambda (API Handler Lambda)** để xử lý logic và khởi tạo S3 Presigned URL an toàn cấp quyền cho Client.
-     * **4.b:** Song song đó, API Handler Lambda ghi nhận một bản ghi khởi tạo (init record) của yêu cầu vào **Amazon DynamoDB** để theo dõi trạng thái request.
-  5. Client (Amazon Amplify) sử dụng Presigned URL để trực tiếp tải dữ liệu nhị phân của hình ảnh lên **S3 Bucket (Raw Store)**, giảm tải tối đa cho server.
-  6. Sự kiện file ảnh được ghi nhận thành công vào **S3 Bucket** ngay lập tức kích hoạt hàm **AWS Lambda (Image processor Lambda)** chạy ngầm bất đồng bộ.
-  7. Hàm Lambda tiến hành hai tác vụ song song:
-     * **7.a:** Thực hiện tối ưu hóa dung lượng, nén, resize ảnh và đẩy tệp ảnh kết quả sang lưu trữ an toàn tại **processed S3 Bucket**.
-     * **7.b:** Thực hiện trích xuất dữ liệu metadata cơ bản của tệp ảnh (kích thước, định dạng, ngày tạo) và ghi bản ghi vào **Amazon DynamoDB** (bảng dữ liệu tại phân hệ AI Analysis).
-  8. Sự kiện tạo mới/cập nhật bản ghi metadata trong DynamoDB (thông qua DynamoDB Streams) kích hoạt **AWS Lambda (AI Analyzer Lambda)** xử lý phân tích nâng cao.
-  9. Hàm Lambda gọi trực tiếp đến dịch vụ trí tuệ nhân tạo **Amazon Rekognition** để nhận diện vật thể, gắn thẻ nhãn (Tags) tự động và kiểm duyệt nội dung ảnh (Content Moderation), sau đó cập nhật ngược lại các nhãn AI này vào bảng dữ liệu **DynamoDB**.
- 
+### 2. Vấn đề và giải pháp
 
-### 4. Triển khai kỹ thuật  
-* **Các giai đoạn triển khai:**
-  1. *Nghiên cứu và Thiết kế kiến trúc:* Phân tích luồng nghiệp vụ tải ảnh, nghiên cứu cơ chế hoạt động của S3 Presigned URL và thiết kế sơ đồ kiến trúc hướng sự kiện (1 tháng).
-  2. *Dự toán chi phí và Phân tích biên an toàn:* Sử dụng công cụ AWS Pricing Calculator để thiết lập hạn mức, cấu hình các Budget Alert ngăn ngừa rủi ro phát sinh vòng lặp vô tận (Tháng 1).
-  3. *Phát triển & Cấu hình dịch vụ nền tảng:* Khởi tạo hạ tầng mạng, cấu hình bảng DynamoDB, viết mã nguồn cho các hàm Lambda nén ảnh và tích hợp API AI Rekognition (Tháng 2).
-  4. *Tích hợp Frontend, Kiểm thử và Triển khai:* Kết nối giao diện React App hoàn chỉnh, thực hiện các bài kiểm thử stress-test luồng xử lý ảnh đồng thời, dọn dẹp tài nguyên rác và đưa hệ thống lên môi trường Production thực tế (Tháng 3).
+* **Vấn đề:** Khi resize, trích xuất metadata và phân tích AI được thực hiện đồng bộ trên cùng một máy chủ, thời gian phản hồi có thể tăng theo kích thước ảnh và số lượng yêu cầu. Việc tự quản lý máy chủ cũng làm phát sinh công việc cấp phát tài nguyên, mở rộng hệ thống, vá lỗi và giám sát.
+* **Giải pháp:** Kết hợp xử lý đồng bộ và bất đồng bộ. Các thao tác xác thực, gọi API và yêu cầu presigned URL được xử lý đồng bộ. Sau khi ảnh được tải trực tiếp lên raw S3 bucket, các tác vụ resize, tạo thumbnail, trích xuất metadata và phân tích Rekognition được thực hiện bất đồng bộ qua S3 Event Notification, Lambda và DynamoDB Streams.
+* **Lợi ích:** Giảm lượng dữ liệu ảnh đi qua API backend, tách tác vụ xử lý nặng khỏi request của người dùng và chỉ sử dụng tài nguyên tính toán khi có sự kiện. Việc phân loại và kiểm duyệt ảnh được tự động hóa, nhưng kết quả Rekognition vẫn cần được xem là dữ liệu hỗ trợ thay vì thay thế hoàn toàn việc kiểm tra của con người.
 
-* **Yêu cầu kỹ thuật:**
-  * *Frontend:* Ứng dụng Single Page Application (React.js/Next.js), sử dụng AWS Amplify SDK hoặc Amazon Cognito Auth SDK để quản lý phiên đăng nhập của người dùng. Tích hợp thư viện Axios hỗ trợ tải luồng dữ liệu nhị phân (Binary stream) trực tiếp lên S3 qua Presigned URL.
-  * *Backend & Hạ tầng Cloud:* Mã nguồn Lambda sử dụng ngôn ngữ lập trình Python (thư viện Pillow/Boto3) hoặc Node.js để tối ưu thời gian khởi động lạnh (Cold start). Cấu hình DynamoDB ở chế độ On-Demand lưu trữ linh hoạt. Thiết lập chính sách Origin Access Control (OAC) bảo vệ S3 Bucket khỏi mọi truy cập công khai không qua xác thực.
+### 3. Kiến trúc giải pháp
 
-### 5. Lộ trình & Mốc triển khai  
-* **Tháng 1:** Hoàn thành nghiên cứu lý thuyết hạ tầng AWS; Đăng ký tài khoản Free Tier và cấu hình bảo mật cơ bản (IAM, Budgets).
-* **Tháng 2:** Hoàn thiện thiết kế kiến trúc hệ thống, cấu hình thành công API Gateway, các bảng cơ sở dữ liệu DynamoDB và viết hoàn chỉnh mã nguồn cho chuỗi Lambda xử lý ảnh ngầm.
-* **Tháng 3:** Triển khai xây dựng giao diện người dùng frontend, thực hiện tích hợp kiểm thử end-to-end từ client lên đám mây, viết tài liệu hướng dẫn kỹ thuật trên GitHub và nghiệm thu dự án.
+Sơ đồ dưới đây mô tả luồng xử lý cốt lõi. Để giữ sơ đồ dễ đọc, các thành phần hỗ trợ như SQS dead-letter queue, CloudWatch, X-Ray và SNS không được thể hiện đầy đủ.
 
-### 6. Ước tính ngân sách  
-Chi phí dự toán được tính toán dựa trên quy mô thử nghiệm hệ thống MVP xử lý trung bình dưới 5,000 ảnh/tháng (Nằm trọn trong gói AWS Free Tier vĩnh viễn và 12 tháng đầu):
+![Smart Image Platform Architecture](/images/2-Proposal/image.png)
 
-* **AWS Lambda:** 0.00 USD/tháng (Nằm trong hạn mức 1 triệu requests miễn phí).
-* **Amazon S3:** ~0.05 USD/tháng (Lưu trữ ảnh thô và ảnh nén, dưới hạn mức 5 GB miễn phí).
-* **Amazon DynamoDB:** 0.00 USD/tháng (Chế độ On-Demand, dưới 25 GB miễn phí dữ liệu dữ liệu tĩnh).
-* **Amazon API Gateway:** 0.00 USD/tháng (Dưới 1 triệu requests miễn phí).
-* **Amazon Rekognition:** 0.00 USD/tháng (Dưới hạn mức 5,000 ảnh miễn phí/tháng của AWS Free Tier).
-* **AWS WAF:** ~5.00 USD/tháng (Chi phí cố định cho Web ACL và các luật cơ bản - Có thể tắt khi làm lab thử nghiệm để tối ưu ngân sách).
+* **Luồng xử lý:**
 
-*Tổng chi phí ước tính:* ~0.00 USD/tháng (Nếu vận hành hoàn toàn trong Free Tier và tắt AWS WAF khi test nội bộ) hoặc ~5.05 USD/tháng (Nếu bật đầy đủ lá chắn bảo mật WAF).
+  1. Người dùng truy cập ứng dụng React được triển khai bằng **AWS Amplify Hosting**.
+  2. Ứng dụng sử dụng **Amazon Cognito User Pool** để đăng ký, xác minh email và đăng nhập. Sau khi xác thực thành công, client nhận JSON Web Token để gọi API.
+  3. Client gửi request kèm token đến **Amazon API Gateway**. **AWS WAF** kiểm tra request trước API; Cognito Authorizer của API Gateway xác minh token trước khi cho phép gọi Lambda.<br> 3.1. **Amazon API Gateway** chuyển Token sang **Amazon Cognito Authorizer** để xác thực tính hợp lệ và quyền hạn của người dùng trước khi xử lý request.
+  4. 4.a. Sau khi xác thực thành công, **Amazon API Gateway** gọi hàm **AWS Lambda (Presigned URL Generator)**. <br> 4.b. **AWS Lambda (Presigned URL Generator)** khởi tạo bản ghi dữ liệu ban đầu vào **DynamoDB**, đồng thời tạo ra một đường dẫn S3 Presigned URL có thời hạn an toàn và trả về cho Client qua **API Gateway**.
+  5. **Amazon Amplify** dùng đường dẫn Presigned URL vừa nhận được để tải trực tiếp tệp ảnh gốc từ thiết bị lên kho lưu trữ **S3 Bucket**.
+  6. Sự kiện ảnh tải thành công lên **S3 Bucket** tự động kích hoạt (trigger) hàm **AWS Lambda (Image processor Lambda)**.
+  7. 7.a. **AWS Lambda (Image processor Lambda)** thực hiện các tác vụ xử lý ảnh cơ bản (như nén, resize) và lưu tệp ảnh hoàn thiện vào **processed S3 Bucket**. <br> 7.b. Đồng thời, hàm **AWS Lambda (Image processor Lambda)** ghi cập nhật trạng thái xử lý ảnh vào cơ sở dữ liệu **DynamoDB**.
+  8. Sự kiện thay đổi dữ liệu tại **DynamoDB** kích hoạt hàm **AWS Lambda (AI Analyzer Lambda)** để bắt đầu quy trình phân tích hình ảnh nâng cao.
+  9. Hàm **AWS Lambda (AI Analyzer Lambda)** gọi API dịch vụ **Amazon Rekognition** để trích xuất các nhãn (labels), vật thể, nhận diện khuôn mặt, sau đó lưu toàn bộ dữ liệu phân tích (Metadata) ngược lại vào **DynamoDB**.
+  
 
-### 7. Đánh giá rủi ro  
-* **Rủi ro vòng lặp vô tận (Infinite Loops):** Lambda xử lý ảnh xong lại lưu đè vào thư mục cũ, kích hoạt chính nó liên tục gây tiêu tốn lượng Credits lớn.
-  * *Biện pháp giảm thiểu:* Tách biệt hoàn toàn hai S3 bucket độc lập: `raw-images-bucket` (chỉ bucket này có quyền kích hoạt trigger Lambda) và `processed-images-bucket` (chỉ dùng để chứa ảnh kết quả, không cấu hình trigger).
-* **Rủi ro tấn công từ chối dịch vụ (DDoS) hoặc Spam API:** Người dùng bên ngoài gửi liên tục requests giả lập làm tràn hàng triệu Lambda executions.
-  * *Biện pháp giảm thiểu:* Đứng trước hệ thống luôn có lớp chắn AWS WAF chặn IP nghi vấn, đồng thời cấu hình Rate Limiting (giới hạn số request/phút trên từng API key) tại API Gateway.
-* **Rủi ro rò rỉ dữ liệu S3 công khai:** File ảnh của người dùng bị truy cập trái phép.
-  * *Biện pháp giảm thiểu:* Bật tính năng Block Public Access của S3 bucket, chỉ cho phép đọc tệp thông qua CloudFront URLs kết hợp ký xác thực an toàn.
+### 4. Triển khai kỹ thuật
 
-### 8. Kết quả kỳ vọng  
-* **Về mặt kỹ thuật:** Hệ thống đạt độ trễ phản hồi tối thiểu, giao diện mượt mà do các tác vụ nặng (nén ảnh, gọi AI bóc tách nhãn) đã được đẩy hoàn toàn xuống tầng ngầm xử lý bất đồng bộ theo thời gian thực.
-* **Giá trị dài hạn:** Xây dựng thành công một bộ khung kiến trúc phần mềm đám mây chuẩn Clean Code, có khả năng tự động mở rộng quy mô (Auto-scaling) từ một vài người dùng ban đầu lên đến hàng vạn người dùng đồng thời mà không cần can thiệp cấu hình lại hệ thống quản trị phần cứng.
+* **Các giai đoạn thực hiện:**
+
+  1. *Nghiên cứu và thiết kế:* Phân tích luồng tải ảnh, S3 presigned URL, xử lý hướng sự kiện, xác thực và mô hình dữ liệu.
+  2. *Xây dựng hạ tầng:* Định nghĩa các stack CDK cho Storage, Database, Authentication, API, Monitoring và Amplify Hosting; cấu hình AWS Budgets để theo dõi chi phí.
+  3. *Phát triển ứng dụng:* Xây dựng frontend, API Handler, Image Processor và AI Analyzer; tích hợp Rekognition, Cognito và các dịch vụ lưu trữ.
+  4. *Kiểm thử và triển khai:* Chạy unit test, kiểm thử end-to-end cho đăng ký, tải ảnh, xử lý ảnh và phân tích AI; triển khai môi trường staging và production. Việc đánh giá tải lớn cần được thực hiện riêng trước khi công bố năng lực người dùng đồng thời.
+
+* **Công nghệ đang sử dụng:**
+
+  * *Frontend:* React 19 và Vite; `amazon-cognito-identity-js` quản lý phiên Cognito; Zustand quản lý trạng thái; native `fetch` gọi REST API và truyền dữ liệu ảnh qua presigned URL.
+  * *Backend:* TypeScript chạy trên Node.js Lambda; AWS SDK for JavaScript v3; Sharp và `exif-reader` xử lý ảnh và metadata.
+  * *Hạ tầng:* AWS CDK bằng TypeScript; DynamoDB On-Demand với Point-in-Time Recovery; hai S3 bucket private bật Block Public Access; API Gateway REST API; Cognito User Pool; SQS dead-letter queue; WAF; CloudWatch; X-Ray và SNS.
+  * *Bảo vệ dữ liệu:* Client chỉ được cấp presigned URL có thời hạn cho thao tác cụ thể. Lambda sử dụng IAM role theo quyền cần thiết; S3 không cho phép truy cập công khai.
+
+### 5. Lộ trình và mốc triển khai
+
+* **Giai đoạn 1:** Hoàn thành nghiên cứu nền tảng AWS, IAM, Budgets, S3, Lambda, DynamoDB, API Gateway, Cognito và các mô hình serverless liên quan.
+* **Giai đoạn 2:** Hoàn thiện kiến trúc, mã nguồn CDK và chuỗi backend xử lý ảnh từ S3 đến Rekognition.
+* **Giai đoạn 3:** Tích hợp frontend, xác thực, phân quyền, thư viện ảnh và trang quản trị; bổ sung WAF, logging, alarms và thông báo SNS.
+* **Giai đoạn 4:** Kiểm thử end-to-end, triển khai staging/production, kết nối tên miền và hoàn thiện tài liệu workshop cùng video demo.
+
+### 6. Ước tính ngân sách
+
+Tài khoản triển khai được tạo sau ngày 15/07/2025 và thuộc chương trình AWS Free Tier mới. Tài khoản nhận 100 USD credits khi đăng ký và có thể nhận thêm tối đa 100 USD khi hoàn thành các hoạt động do AWS quy định. Free Plan kết thúc sau tối đa sáu tháng hoặc khi credits hết, tùy điều kiện nào đến trước. Credits chưa sử dụng hết có thể tiếp tục được áp dụng sau khi nâng cấp lên Paid Plan nhưng hết hạn sau 12 tháng kể từ ngày tạo tài khoản.
+
+Ước tính dưới đây sử dụng môi trường `ap-southeast-1`, tối đa 5.000 ảnh mới mỗi tháng, kích thước trung bình 3 MB cho ảnh gốc và tổng 1 MB cho thumbnail cùng ảnh resized. Mỗi ảnh được gọi một lần với DetectLabels và một lần với DetectModerationLabels. Lưu lượng frontend và API được giả định ở quy mô MVP, không có CloudFront riêng cho processed bucket.
+
+| Thành phần | Ước tính sau khi hết credits | Cơ sở ước tính |
+|---|---:|---|
+| AWS WAF | 7–7,10 USD/tháng | Một Web ACL, một AWS Managed Rules group, một rate-based rule và lưu lượng dưới một triệu request |
+| Amazon Rekognition | 1–2 USD ở 1.000 ảnh; 9–10 USD ở 5.000 ảnh | Hai API thuộc Group 2 được gọi cho mỗi ảnh; free usage hiện hành được tính theo điều kiện của tài khoản |
+| Amazon S3 | 0,50–1,50 USD/tháng đầu | Khoảng 20 GB dữ liệu mới ở mức 5.000 ảnh, cộng request; chi phí lưu trữ tăng theo dữ liệu tích lũy và giảm dần khi raw object chuyển sang IA/Glacier |
+| AWS Lambda | 0–1 USD/tháng | Bốn Lambda; Image Processor dùng 1.536 MB và có thời gian chạy phụ thuộc kích thước ảnh |
+| API Gateway và DynamoDB | 0–1 USD/tháng | Lưu lượng MVP, ba bảng On-Demand, DynamoDB Streams và PITR |
+| CloudWatch, X-Ray, SNS và SQS | 0,20–4 USD/tháng | Log retention 14–30 ngày, 12 standard alarms, một dashboard, trace, hai DLQ và email notification |
+| Amplify Hosting | 0–1 USD/tháng | SPA nhỏ, số lần build và data transfer thấp |
+| Amazon Cognito | 0 USD/tháng | Số người dùng hoạt động hàng tháng ở quy mô MVP nằm dưới hạn mức miễn phí áp dụng |
+
+* **Trong thời gian Free Plan/credits còn hiệu lực:** chi phí dịch vụ vẫn được ghi nhận nhưng được credits bù trừ. Số tiền phải thanh toán dự kiến khoảng **0 USD/tháng**, với điều kiện credits chưa hết và không phát sinh lưu lượng bất thường.
+* **Sau khi hết credits:** khoảng **10–14 USD/tháng** ở mức tối đa 1.000 ảnh mới, hoặc khoảng **18–25 USD/tháng** khi gần 5.000 ảnh mới. Đây là khoảng dự toán, không phải mức giá cố định.
+* **Chi phí tăng theo thời gian:** raw bucket chuyển sang Standard-IA sau 90 ngày và Glacier sau 365 ngày, nhưng processed bucket không có quy tắc hết hạn. Dung lượng tích lũy cần được theo dõi riêng.
+* **Custom domain:** tên miền và DNS được quản lý bởi nhà cung cấp bên ngoài AWS. Dự án không tạo Route 53 hosted zone, vì vậy không tính Route 53 hay phí đăng ký tên miền vào ngân sách AWS này.
+
+Số tiền thực tế cần được xác nhận bằng AWS Pricing Calculator, Billing và Cost Explorer của tài khoản triển khai. Ước tính chưa bao gồm thuế, phí của nhà cung cấp tên miền và trường hợp vượt service quota hoặc phát sinh lưu lượng bất thường.
+
+Tham khảo: [AWS Free Tier](https://aws.amazon.com/free/), [AWS WAF Pricing](https://aws.amazon.com/waf/pricing/), [Amazon Rekognition Pricing](https://aws.amazon.com/rekognition/pricing/) và [Amazon API Gateway Pricing](https://aws.amazon.com/api-gateway/pricing/).
+
+### 7. Đánh giá rủi ro
+
+* **Vòng lặp xử lý S3:** Nếu Lambda ghi kết quả trở lại cùng vị trí đang phát sinh trigger, hàm có thể tự kích hoạt liên tục.
+  * *Biện pháp:* Tách raw bucket và processed bucket. Chỉ raw bucket có S3 notification đến Image Processor và trigger được giới hạn ở prefix `users/`.
+* **Lỗi xử lý bất đồng bộ:** Sự kiện Lambda có thể thất bại do file không hợp lệ, timeout hoặc lỗi dịch vụ phụ thuộc.
+  * *Biện pháp:* Cấu hình retry và SQS dead-letter queue; sử dụng CloudWatch alarm và SNS để thông báo lỗi.
+* **API spam hoặc lưu lượng bất thường:** Request lặp lại có thể làm tăng số lần gọi API Gateway và Lambda.
+  * *Biện pháp:* WAF áp dụng AWS Managed Rules Common Rule Set và rate-based rule giới hạn 2.000 request cho mỗi địa chỉ IP trong cửa sổ đánh giá của WAF. API Gateway stage được cấu hình rate limit 1.000 request/giây và burst 500. Đây là giới hạn cấp stage, không phải hạn mức theo API key.
+* **Rò rỉ dữ liệu S3:** Object có thể bị truy cập ngoài phạm vi người dùng được phép.
+  * *Biện pháp:* Bật Block Public Access, dùng IAM least privilege, kiểm tra quyền sở hữu ở API Handler và chỉ cấp presigned GET/PUT URL có thời hạn.
+* **Kết quả AI không chính xác:** Nhãn hoặc kết quả kiểm duyệt có thể có false positive hoặc false negative.
+  * *Biện pháp:* Lưu confidence score, sử dụng ngưỡng cấu hình và cho phép quản trị viên xem xét nội dung khi cần.
+* **Chi phí ngoài dự kiến:** Log retention, PITR, WAF, dữ liệu S3 tích lũy hoặc chuỗi xử lý lặp lại có thể làm tăng hóa đơn và tiêu hao credits.
+  * *Biện pháp:* Cấu hình AWS Budgets, retention phù hợp, CloudWatch alarms và kiểm tra Cost Explorer định kỳ.
+
+### 8. Kết quả kỳ vọng
+
+* Người dùng có thể đăng ký, xác minh email, đăng nhập, quản lý hồ sơ và tải ảnh lên qua giao diện web.
+* Ảnh được lưu trong bucket private, tạo thumbnail và phiên bản resized, trích xuất metadata, nhận diện nhãn và kiểm duyệt nội dung theo luồng bất đồng bộ.
+* API cung cấp tìm kiếm, lọc, phân trang, thư viện cá nhân, thư viện cộng đồng và các chức năng quản trị theo quyền Cognito.
+* Hạ tầng có thể được triển khai lặp lại bằng CDK cho staging và production, đồng thời cung cấp log, trace, metrics và cảnh báo vận hành.
+* Các dịch vụ managed có khả năng mở rộng trong giới hạn service quota. Năng lực tải cụ thể chỉ được công bố sau khi có kết quả load test và đánh giá quota tương ứng.

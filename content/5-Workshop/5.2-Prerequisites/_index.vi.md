@@ -6,26 +6,53 @@ chapter: false
 pre: " <b> 5.2. </b> "
 ---
 
-# Điều kiện tiên quyết của Workshop
+# Điều kiện tiên quyết
 
-Trước khi bắt đầu cấu hình hệ thống **Smart Image Platform**, hãy đảm bảo bạn đã chuẩn bị đầy đủ các yếu tố sau:
+## 1. Tài khoản và quyền AWS
 
-### 1. Tài khoản AWS (AWS Account)
-* Bạn phải có một tài khoản **AWS Account** đang hoạt động.
-* IAM User hoặc IAM Role dùng để đăng nhập vào AWS Management Console cần được cấp quyền quản trị (ví dụ gắn policy `AdministratorAccess`).
-* Xác định vùng (Region) thực hiện cấu hình (vùng mặc định của dự án là `ap-southeast-1` - Singapore).
+- Không sử dụng root user cho các thao tác hằng ngày.
+- Ưu tiên IAM Identity Center hoặc IAM role. Đối với tài khoản sandbox cá nhân, có thể dùng IAM user được bật MFA.
+- `AdministratorAccess` giúp đơn giản hóa workshop nhưng chỉ phù hợp với sandbox. Môi trường thực tế cần permission set hoặc policy theo nguyên tắc least privilege.
+- Region sử dụng trong workshop: `ap-southeast-1` (Singapore).
 
-![AWS Management Console Login](/images/5-Workshop/5.2-Prerequisites/IAM_Console.png)
+![IAM user dùng trong tài khoản sandbox](/images/5-Workshop/5.2-Prerequisites/IAM_Console.png)
 
-### 2. Môi trường phát triển cục bộ (Local Environment)
-Cài đặt các công cụ sau trên máy cá nhân nếu bạn muốn build hoặc deploy mã nguồn bằng lệnh:
-* **Node.js** (phiên bản 20 trở lên)
-* **npm** (phiên bản 10 trở lên)
-* **AWS CLI** (đã cấu hình thông tin xác thực tài khoản AWS bằng lệnh `aws configure`)
+> Ảnh minh họa một IAM user trong môi trường sandbox. Không áp dụng cách gắn `AdministratorAccess` trực tiếp cho workload production.
 
-### 3. Repository GitHub (Cho việc triển khai Frontend CI/CD)
-Ứng dụng frontend React sẽ được lưu trữ và triển khai trên AWS Amplify thông qua cơ chế tự động đồng bộ (CI/CD) với GitHub.
-* Đẩy mã nguồn dự án của bạn (`AWS-Project`) lên một **GitHub Repository** (ở chế độ public hoặc private).
-* Chuẩn bị sẵn một **GitHub Personal Access Token (PAT)** có quyền `repo` và `admin:repo_hook` hoặc thực hiện liên kết xác thực tài khoản GitHub của bạn với dịch vụ AWS Amplify trong quá trình thiết lập.
+## 2. Môi trường phát triển
 
-![GitHub Repository](/images/5-Workshop/5.2-Prerequisites/GitHub_Repo.png)
+Cài đặt và kiểm tra:
+
+```bash
+node --version
+npm --version
+aws --version
+cdk --version
+git --version
+```
+
+Yêu cầu dự án hiện tại:
+
+- Node.js 20 trở lên để build workspace; Lambda runtime trong mã CDK hiện là Node.js 20.x và cần được nâng lên runtime còn được hỗ trợ trước khi triển khai dài hạn.
+- AWS CLI đã cấu hình profile hoặc thông tin đăng nhập tạm thời.
+- AWS CDK CLI v2.
+- Git và quyền đọc repository `AWS-Project`.
+
+Kiểm tra danh tính AWS trước khi deploy:
+
+```bash
+aws sts get-caller-identity
+```
+
+## 3. Repository và Amplify
+
+Amplify Console sử dụng GitHub App để kết nối repository. Chọn đúng repository và nhánh `staging` hoặc `main`, khuyên dùng `staging`.
+
+CDK hiện nhận các giá trị `GITHUB_REPO_URL`, `GITHUB_BRANCH` và `GITHUB_TOKEN` từ biến môi trường để tạo Amplify app. Token không được commit vào Git hoặc ghi trực tiếp vào tài liệu.
+
+## 4. Chi phí và phạm vi
+
+- Dùng môi trường `staging` cho workshop.
+- Theo dõi Billing/Budgets trong suốt quá trình.
+- WAF, NAT Gateway, log storage, Rekognition và các tài nguyên chạy lâu có thể phát sinh chi phí ngoài Free Tier.
+- Không deploy `production` nếu chưa kiểm tra removal policy `RETAIN`.

@@ -1,88 +1,92 @@
 ---
-title: "Xác thực người dùng với Amazon Cognito"
+title: "Console - Xác thực Cognito"
 date: 2024-01-01
-weight: 4
+weight: 5
 chapter: false
-pre: " <b> 5.4. </b> "
+pre: " <b> 5.5. </b> "
 ---
 
+# Amazon Cognito trên AWS Console (tùy chọn)
 
-# Cấu hình Xác thực Amazon Cognito
+> Bỏ qua bước tạo User Pool nếu Auth stack đã được deploy. Console có thể thay đổi bố cục; cần giữ đúng giá trị cấu hình thay vì phụ thuộc tên nút.
 
-Trong phần này, bạn sẽ tạo và cấu hình một Amazon Cognito User Pool nhằm phục vụ cho hoạt động đăng ký, đăng nhập tài khoản người dùng, đồng thời tích hợp bảo vệ API Gateway.
+## 1. Tạo User Pool và SPA app client
 
-Tùy thuộc vào trạng thái tài khoản và AWS Region của bạn, giao diện điều khiển Console có thể hiển thị dưới dạng **Trình hướng dẫn 6 bước chuẩn (Standard Wizard)** hoặc **Trình hướng dẫn thiết lập nhanh rút gọn (Simplified Wizard)**. Hãy chọn luồng cấu hình tương ứng dưới đây.
+AWS có thể hiển thị wizard rút gọn hoặc wizard nhiều bước. Hai luồng dưới đây tạo cùng một cấu hình; chỉ thực hiện một luồng.
 
----
+### A. Giao diện thiết lập nhanh
 
-### Bước 1: Tạo Cognito User Pool
+1. Mở [Amazon Cognito Console](https://console.aws.amazon.com/cognito/) ở Region `ap-southeast-1`.
+2. Chọn **Create user pool** hoặc **Set up resources for your application**.
+3. Ở **Application type**, chọn **Single-page application (SPA)**.
+4. Đặt tên ứng dụng `SmartImage-WebClient-staging`.
+5. Ở **Options for sign-in identifiers**, chỉ chọn **Email**; bỏ Username và Phone number.
+6. Bật **Enable self-registration**.
+7. Ở **Required attributes for sign-up**, chọn `email` và `name`.
+8. Không cần return URL hoặc managed login cho workshop vì frontend dùng form React và Amplify Auth trực tiếp.
+9. Chọn **Create user directory**.
 
-#### Trường hợp A: Sử dụng Giao diện thiết lập nhanh rút gọn (Khuyên dùng)
-Nếu bạn nhìn thấy giao diện **"Set up resources for your application"** giống như trong screenshot:
-1. **Define your application:**
-   * **Application type:** Tích chọn **Single-page application (SPA)**. (Lưu ý quan trọng: Việc chọn SPA sẽ tự động thiết lập app client này thành một *Public Client* và *Không tạo client secret*, rất cần thiết để gọi API trực tiếp từ mã nguồn React của phía Client).
-   * **Name your application:** Điền tên ứng dụng, ví dụ: `SmartImage-WebClient`.
-2. **Configure options:**
-   * **Options for sign-in identifiers:** Tích chọn **Email** (đảm bảo bỏ tích ở Username và Phone number).
-   * **Self-registration:** Đảm bảo tích chọn **Enable self-registration** (cho phép người dùng tự đăng ký).
-   * **Required attributes for sign-up:** Nhấp vào ô dropdown và chọn cả hai thuộc tính **email** và **name**.
-3. **Add a return URL - optional:**
-   * Để trống (chúng ta sẽ dùng các biểu mẫu đăng nhập tự tùy biến ở React frontend chứ không sử dụng giao diện đăng nhập mặc định Hosted UI của Cognito).
-4. Nhấn **Create user directory** (hệ thống sẽ tự động khởi tạo User Pool và cấu hình client SPA đi kèm).
+### B. Giao diện cấu hình nhiều bước
 
-#### Trường hợp B: Sử dụng Trình hướng dẫn cấu hình 6 bước chuẩn (Standard 6-Step Wizard)
-Nếu giao diện hiển thị dưới dạng biểu mẫu cấu hình nhiều bước:
-1. Tại mục **Configure sign-in experience**:
-   * **Cognito user pool sign-in options:** Tích chọn duy nhất ô **Email**. Nhấn **Next**.
-2. Tại mục **Configure security requirements**:
-   * **Password policy:** Chọn **Cognito defaults**.
-   * **Multi-factor authentication (MFA):** Chọn **No MFA**. Nhấn **Next**.
-3. Tại mục **Configure sign-up experience**:
-   * Giữ tích chọn **Self-service sign-up**.
-   * **Required attributes:** Chọn thêm **name** và **email**. Nhấn **Next**.
-4. Tại mục **Configure message delivery**:
-   * **Email provider:** Chọn **Send email with Cognito**. Nhấn **Next**.
-5. Tại mục **Integrate app**:
-   * **User pool name:** Điền `SmartImage-UserPool`.
-   * **Hosted UI:** Không tích chọn.
-   * **App client:** Chọn **Public client**.
-   * **App client name:** Điền `SmartImage-WebClient`.
-   * **Client secret:** Chọn **Don't generate a client secret** (Lưu ý: Bắt buộc chọn cái này để code React chạy ở client-side an toàn).
-   * Chọn **Next**.
-6. Tại mục **Review and create**: Nhấn **Create user pool**.
+1. Ở **Configure sign-in experience**, chọn **Email** làm sign-in option duy nhất.
+2. Ở **Configure security requirements**, đặt password policy tối thiểu 8 ký tự và yêu cầu chữ hoa, chữ thường, số, ký tự đặc biệt.
+3. Chọn MFA **Optional** và chỉ bật **Authenticator apps/TOTP**; không bật SMS để khớp CDK.
+4. Ở **Configure sign-up experience**, bật self-service sign-up, yêu cầu `email` và `name`, đồng thời bật tự động xác minh email.
+5. Đặt account recovery chỉ qua **Verified email**.
+6. Ở **Configure message delivery**, có thể chọn **Send email with Cognito** cho lab. Cấu hình SES riêng chỉ cần thiết khi triển khai production.
+7. Ở **Integrate app**, nhập User Pool name `SmartImage-UserPool-staging`.
+8. Tạo app client `SmartImage-WebClient-staging` loại public client, chọn **Don't generate a client secret** và bật luồng SRP (`ALLOW_USER_SRP_AUTH`).
+9. Không bật Hosted UI/managed login nếu frontend tiếp tục dùng form tùy biến.
+10. Kiểm tra trang review rồi chọn **Create user pool**.
 
-![Cấu hình Cognito User Pool](/images/5-Workshop/5.4-Cognito-Auth/cognito_userpool_setup.png)
+![Cấu hình SPA, email và thuộc tính đăng ký](/images/5-Workshop/5.4-Cognito-Auth/cognito_userpool_setup.png)
 
----
+## 2. Custom attribute
 
-### Bước 2: Thêm Custom Attribute
+CDK hiện tạo `custom:role` kiểu String, mutable, độ dài 1–20. Có thể tạo thuộc tính này để mô phỏng đúng stack, nhưng ứng dụng không dùng nó làm nguồn phân quyền chính.
 
-Chúng ta cần thêm thuộc tính tùy biến `custom:role` để kiểm soát xem người dùng là user thường hay admin.
-1. Trong giao diện Cognito Console, bấm chọn User Pool bạn vừa tạo ở trên.
-2. Chuyển sang tab **Sign-up**.
-3. Cuộn xuống mục **Custom attributes** và chọn **Add custom attribute** (hoặc **Create custom attribute**).
-4. **Attribute name:** Điền `role`.
-5. **Type:** Chọn **String**.
-6. **Constraints:** Đặt độ dài tối thiểu (Min length) là `1` và tối đa (Max length) là `20`.
-7. Chọn **Save changes** (hoặc **Create**).
+Nếu wizard cho phép khai báo custom attribute:
 
----
+1. Mở User Pool vừa tạo và tìm **Sign-up experience** hoặc **Sign-up**.
+2. Trong **Custom attributes**, chọn **Add custom attribute**.
+3. Nhập attribute name `role`, kiểu **String**.
+4. Đặt minimum length `1`, maximum length `20` và cho phép thay đổi giá trị (**Mutable**).
+5. Chọn **Save changes** hoặc **Create**.
 
-### Bước 3: Tạo các nhóm người dùng (User Groups)
+Custom attribute thường không thể xóa hoặc thay đổi kiểu sau khi User Pool được tạo. Nếu Console hiện tại yêu cầu khai báo attribute ngay trong wizard, quay lại bước tạo pool thay vì tạo thêm một pool không cần thiết.
 
-Chúng ta định nghĩa hai nhóm quản trị:
-1. Trong User Pool của bạn, chuyển sang tab **User groups**.
+> **Khác biệt cần lưu ý:** Frontend và backend kiểm tra claim `cognito:groups`, không kiểm tra `custom:role`. Thuộc tính này có thể được xem là tùy chọn đối với phần Console.
+
+## 3. User groups
+
+1. Mở User Pool và chọn tab **User groups**.
 2. Chọn **Create group**.
-3. **Group name:** Điền `admin`.
-4. **Description:** Điền `Administrators with moderation access`.
-5. **Precedence:** Điền `0` (Mức ưu tiên cao nhất).
-6. Chọn **Create group**.
-7. Chọn **Create group** một lần nữa.
-8. **Group name:** Điền `user`.
-9. **Description:** Điền `Regular users`.
-10. **Precedence:** Điền `10`.
-11. Chọn **Create group**.
+3. Nhập group name `admin`, description `Administrators with moderation access`, precedence `0`, rồi chọn **Create group**.
+4. Chọn **Create group** lần nữa.
+5. Nhập group name `user`, description `Regular users`, precedence `10`, rồi chọn **Create group**.
 
-![Cấu hình Cognito Groups](/images/5-Workshop/5.4-Cognito-Auth/cognito_groups_setup.png)
+Kết quả cần có:
 
-*Lưu ý: Hãy ghi lại hai thông số **User Pool ID** và **App Client ID** hiển thị ở trang thông tin tổng quan của User Pool. Bạn sẽ cần chúng để cấu hình API Authorizer và React frontend sau này.*
+| Group | Description | Precedence |
+|---|---|---|
+| `admin` | Administrators with moderation access | 0 |
+| `user` | Regular users | 10 |
+
+![Hai Cognito group của dự án](/images/5-Workshop/5.4-Cognito-Auth/cognito_groups_setup.png)
+
+## 4. Tạo người dùng thử và gán group
+
+1. Có thể đăng ký từ frontend ở phần Testing, hoặc mở tab **Users** → **Create user** để tạo thủ công.
+2. Nếu tạo từ Console, nhập email hợp lệ và chọn gửi invitation hoặc đánh dấu email verified theo mục đích lab.
+3. Mở người dùng sau khi tài khoản ở trạng thái phù hợp, chọn **Add user to group**.
+4. Chọn `user` cho tài khoản thường hoặc `admin` cho tài khoản kiểm thử chức năng moderation.
+5. Đăng xuất rồi đăng nhập lại trên frontend sau khi đổi group để nhận ID token mới chứa claim `cognito:groups`.
+
+Dự án hiện chưa có Post Confirmation trigger tự động thêm người đăng ký vào group `user`; đăng ký thành công không đồng nghĩa tài khoản đã thuộc group.
+
+## 5. Ghi lại thông số tích hợp
+
+1. Trong **User pool overview**, sao chép **User Pool ID**.
+2. Trong **App integration** → **App clients**, mở app client và sao chép **Client ID**.
+3. Xác nhận app client không có client secret và SRP authentication được bật.
+4. Dùng User Pool ID cho API Gateway authorizer; dùng cả User Pool ID và Client ID cho biến môi trường của Amplify.

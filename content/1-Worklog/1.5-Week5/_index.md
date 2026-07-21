@@ -6,20 +6,20 @@ chapter: false
 pre: " <b> 1.5. </b> "
 ---
 ### Week 5 Objectives:
-* Learn and implement Hybrid DNS resolution across Cloud and On-premises environments via Route 53 Resolver.
-* Connect to RDP via RDGW, test DNS resolution results, and perform lab resource cleanup.
+* Set up a highly secure static website on S3 combined with Amazon CloudFront CDN.
+* Configure S3 Public Access Block policies and Bucket Policies to enforce data privacy.
+* Learn and configure S3 Bucket Versioning and Cross-Region Replication (CRR) to support disaster recovery (DR) plans.
 
 ### Tasks to be carried out this week:
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | --- | --- | --- | --- |
-| 2 | - **Initialize Hybrid DNS Infrastructure:** <br>&emsp; + Module 02-Lab10-01 - Set up Hybrid DNS with Route 53 Resolver (Introduction) <br>&emsp; + Module 02-Lab10-02.1 - Generate Key Pair <br>&emsp; + Module 02-Lab10-02.2 - Initialize CloudFormation Template | 05/18/2026 | 05/18/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 3 | - **Configure Security & RDGW Connection:** <br>&emsp; + Module 02-Lab10-02.3 - Configure Security Group <br>&emsp; + Module 02-Lab10-03 - Connect to RDGW | 05/19/2026 | 05/19/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 4 | - **Configure DNS Outbound Integration:** <br>&emsp; + Module 02-Lab10-05 - Set up DNS <br>&emsp; + Module 02-Lab10-05.1 - Create Route 53 Outbound Endpoint | 05/20/2026 | 05/20/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 5 | - **Configure Resolver Rules & Inbound Endpoints:** <br>&emsp; + Module 02-Lab10-05.2 - Create Route 53 Resolver Rules <br>&emsp; + Module 02-Lab10-05.3 - Create Route 53 Inbound Endpoints | 05/21/2026 | 05/21/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 6 | - **Verification and Resource Cleanup:** <br>&emsp; + Module 02-Lab10-05.4 - Test results and hybrid domain resolution <br>&emsp; + Module 02-Lab10-06 - Clean up resources to minimize cost | 05/22/2026 | 05/22/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 2 | - **Implement S3 Static Website:** <br>&emsp; + Module 03-Lab57-02.1 - Create S3 bucket <br>&emsp; + Module 03-Lab57-02.2 - Load data <br>&emsp; + Module 03-Lab57-03 - Enable static website feature | 05/18/2026 | 05/18/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - **Configure S3 Public Access:** <br>&emsp; + Module 03-Lab57-04 - Configuring public access block <br>&emsp; + Module 03-Lab57-05 - Configuring public objects <br>&emsp; + Module 03-Lab57-06 - Test website | 05/19/2026 | 05/19/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **Configure CloudFront CDN Integration:** <br>&emsp; + Module 03-Lab57-07.1 - Block all public access <br>&emsp; + Module 03-Lab57-07.2 - Config Amazon CloudFront <br>&emsp; + Module 03-Lab57-07.3 - Test Amazon Cloudfront | 05/20/2026 | 05/20/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - **Implement Data Protection & Replication:** <br>&emsp; + Module 03-Lab57-08 - Bucket Versioning <br>&emsp; + Module 03-Lab57-09 - Move objects | 05/21/2026 | 05/21/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - **Finalize Cross-Region Replication & Cleanup:** <br>&emsp; + Module 03-Lab57-10 - Replication Object multi Region <br>&emsp; + Module 03-Lab57-11 - Clean up resources | 05/22/2026 | 05/22/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Week 5 Achievements:
-* Used AWS CloudFormation to automatically provision infrastructure for the Hybrid DNS lab environment.
-* Created a Hybrid DNS solution capable of resolving domain names between On-Premises and AWS Cloud via Route 53 Resolver Inbound/Outbound Endpoints & Rules.
-* Established Remote Desktop Gateway (RDGW) connection successfully.
-* Cleaned up all resources to keep billing at a minimum.
+* Deployed an S3 hosted static site, restricted direct public traffic on the bucket, and routed requests through CloudFront CDN to safeguard data and accelerate load speeds globally.
+* Implemented S3 Bucket Versioning to store previous file copies and track changes.
+* Set up Cross-Region Replication (CRR) to automatically mirror files to a secondary region, supporting robust disaster recovery (DR) strategies.

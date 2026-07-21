@@ -6,19 +6,19 @@ chapter: false
 pre: " <b> 1.7. </b> "
 ---
 ### Mục tiêu Tuần 7:
-* Thiết lập một trang web tĩnh có độ bảo mật cao trên S3 kết hợp với mạng phân phối nội dung Amazon CloudFront CDN.
-* Tìm hiểu và cấu hình tính năng S3 Bucket Versioning (Quản lý phiên bản) và Cross-Region Replication (CRR - Sao chép liên vùng) để hỗ trợ các kế hoạch khôi phục sau thảm họa (DR).
-
+* Nắm vững tư duy quy hoạch kiến trúc tính sẵn sàng cao (High Availability), khả năng mở rộng và chịu tải cho các hệ thống phân tán trên AWS.
+* Phân tích và đưa ra giải pháp thực tế dựa trên 6 trụ cột của khung AWS Well-Architected: Vận hành tối ưu, Bảo mật, Độ tin cậy, Hiệu năng cao, Tối ưu chi phí và Phát triển bền vững.
+* Cập nhật bộ Standard Architecture Icons mới nhất từ AWS và thành thạo công cụ vẽ sơ đồ Draw.io theo quy chuẩn cho các kiến trúc ứng dụng quy mô lớn.
 ### Các tác vụ cần thực hiện trong tuần này:
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | --- | --- | --- | --- |
-| 2 | - **Triển khai S3 Static Website:** <br>&emsp; + Module 03-Lab57-02.1 - Tạo S3 bucket <br>&emsp; + Module 03-Lab57-02.2 - Tải dữ liệu lên <br>&emsp; + Module 03-Lab57-03 - Bật tính năng static website | 01/06/2026 | 01/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 3 | - **Cấu hình Quyền truy cập Công khai S3 (Public Access):** <br>&emsp; + Module 03-Lab57-04 - Cấu hình chặn truy cập công khai (public access block) <br>&emsp; + Module 03-Lab57-05 - Cấu hình các đối tượng công khai (public objects) <br>&emsp; + Module 03-Lab57-06 - Kiểm tra trang web | 02/06/2026 | 02/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 4 | - **Cấu hình Tích hợp CloudFront CDN:** <br>&emsp; + Module 03-Lab57-07.1 - Chặn toàn bộ quyền truy cập công khai <br>&emsp; + Module 03-Lab57-07.2 - Cấu hình Amazon CloudFront <br>&emsp; + Module 03-Lab57-07.3 - Kiểm tra Amazon Cloudfront | 03/06/2026 | 03/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 5 | - **Triển khai Bảo vệ Dữ liệu & Sao chép (Replication):** <br>&emsp; + Module 03-Lab57-08 - Bucket Versioning <br>&emsp; + Module 03-Lab57-09 - Di chuyển các đối tượng (objects) | 04/06/2026 | 04/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
-| 6 | - **Hoàn tất Sao chép Liên vùng & Dọn dẹp Tài nguyên:** <br>&emsp; + Module 03-Lab57-10 - Sao chép đối tượng liên vùng (multi Region) <br>&emsp; + Module 03-Lab57-11 - Dọn dẹp tài nguyên | 05/06/2026 | 05/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 2 | - Tìm hiểu tư duy quy hoạch và các mô hình đảm bảo tính sẵn sàng cao (High Availability), khả năng mở rộng/chịu tải cho hệ thống trên AWS. | 01/06/2026 | 01/06/2026 | https://docs.aws.amazon.com/whitepapers/latest/real-time-communication-on-aws/high-availability-and-scalability-on-aws.html |
+| 3 | - Giải mã và đưa ra giải pháp thực tế cho 3 nhóm tiêu chí: Tối ưu vận hành, An toàn thông tin, Độ tin cậy hệ thống. | 02/06/2026 | 02/06/2026 |  https://aws.amazon.com/vi/architecture/well-architected/?ref=wellarchitected-wp |
+| 4 | - Nghiên cứu kịch bản áp dụng thực tế cho 3 nhóm tiêu chí tiếp theo: Tối ưu hiệu năng, Tiết kiệm chi phí, Phát triển bền vững. | 03/06/2026 | 03/06/2026 | https://aws.amazon.com/vi/architecture/well-architected/?ref=wellarchitected-wp |
+| 5 | - Cập nhật bộ Standard Architecture Icons mới nhất từ AWS. Làm quen và làm chủ công cụ dựng sơ đồ Draw.io theo quy chuẩn. | 04/06/2026 | 04/06/2026 | |
+| 6 | Tổng hợp 6 tiêu chí AWS Well-Architected để áp dụng vào bài toán thực tế và hoàn thiện mô hình sơ đồ khối cho hệ thống phân tán quy mô lớn. | 05/06/2026 | 05/06/2026 | |
 
 ### Thành tựu Tuần 7:
-* Triển khai thành công trang web tĩnh lưu trữ trên S3, giới hạn lưu lượng truy cập công khai trực tiếp vào bucket, và định tuyến các yêu cầu qua CloudFront CDN nhằm bảo vệ dữ liệu và tăng tốc độ tải trang trên toàn cầu.
-* Triển khai S3 Bucket Versioning để lưu trữ các bản sao tệp tin cũ và theo dõi lịch sử thay đổi.
-* Thiết lập thành công tính năng Sao chép Liên vùng (Cross-Region Replication - CRR) để tự động đồng bộ hóa các tệp tin sang một vùng thứ hai, hỗ trợ các chiến lược khôi phục sau thảm họa (DR) mạnh mẽ.
+ - Nắm vững tư duy thiết kế và làm chủ các mô hình đảm bảo tính sẵn sàng cao, khả năng mở rộng (Scalability) và chịu tải tốt cho hệ thống phân tán trên AWS.
+ - Đã phân tích và đề xuất giải pháp thực tế đáp ứng trọn vẹn 6 trụ cột kiến trúc (Vận hành tối ưu, An toàn thông tin, Độ tin cậy, Hiệu năng cao, Tối ưu chi phí và Phát triển bền vững).
+ - Thành thạo việc sử dụng bộ Standard Architecture Icons mới nhất từ AWS và vẽ hoàn thiện sơ đồ khối kiến trúc quy mô lớn trên công cụ Draw.io theo đúng quy chuẩn.
